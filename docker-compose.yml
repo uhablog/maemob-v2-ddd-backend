@@ -1,0 +1,22 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:17.0-alpine3.20
+    env_file:
+      - ./db/postgre-variables.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  pgweb:
+    container_name: pgweb
+    restart: always
+    image: sosedoff/pgweb
+    env_file:
+      - ./db/postgre-variables.env
+    ports: 
+      - "8081:8081" 
+    links: 
+      - postgres:postgres  # my database container is called postgres, not db
+    depends_on:
+      - postgres

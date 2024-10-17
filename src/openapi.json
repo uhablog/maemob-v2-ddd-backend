@@ -1,0 +1,169 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MaeMob",
+    "version": "1.0.0",
+    "description": "サッカーゲームのリーグ管理用API"
+  },
+  "paths": {
+    "/players": {
+      "get": {
+        "summary": "プレイヤー一覧の取得",
+        "responses": {
+          "200": {
+            "description": "プレイヤーのリスト",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Player"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/player": {
+      "post": {
+        "summary": "プレイヤーの登録",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewPlayer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "新しいプレイヤーが登録されました",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Player"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/matches": {
+      "get": {
+        "summary": "試合一覧の取得",
+        "responses": {
+          "200": {
+            "description": "試合のリスト",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Match"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/match": {
+      "post": {
+        "summary": "試合結果の登録",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewMatch"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "試合結果が登録されました",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Match"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Player": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "name": { "type": "string", "example": "Taro" },
+          "points": { "type": "integer", "example": 3 }
+        }
+      },
+      "NewPlayer": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Taro" }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Match": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "example": 1 },
+          "homePlayer": { "type": "string", "example": "Taro" },
+          "awayPlayer": { "type": "string", "example": "Jiro" },
+          "homeScore": { "type": "integer", "example": 2 },
+          "awayScore": { "type": "integer", "example": 1 },
+          "match_date": { "type": "string", "format": "date-time" }
+        }
+      },
+      "NewMatch": {
+        "type": "object",
+        "properties": {
+          "homePlayer": { "type": "string", "example": "Taro" },
+          "awayPlayer": { "type": "string", "example": "Jiro" },
+          "homeScore": { "type": "integer", "example": 2, "minimum": 0 },
+          "awayScore": { "type": "integer", "example": 1, "minimum": 0 }
+        },
+        "required": [
+          "homePlayer",
+          "awayPlayer",
+          "homeScore",
+          "awayScore"
+        ]
+      }
+    }
+  }
+}

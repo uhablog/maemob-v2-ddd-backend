@@ -28,7 +28,10 @@ export class PlayerController {
 
     const { name } = req.body;
 
-    if (name === undefined) res.status(400).json({message: "nameは必須です"});
+    if (name === undefined) {
+      res.status(400).json({message: "nameは必須です"});
+      return;
+    }
 
     console.log(`resister player ${name}`);
 

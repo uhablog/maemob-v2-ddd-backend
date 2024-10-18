@@ -1,12 +1,15 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from './openapi.json';
+import playerRouter from './interfaces/http/routes/playerRouter';
 
 const app = express();
 app.use(express.json());
 
 // Swagger UIをセットアップ
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+app.use('/api', playerRouter);
 
 const PORT = process.env.PORT || 3000;
 

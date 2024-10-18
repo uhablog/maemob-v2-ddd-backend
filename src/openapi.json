@@ -6,7 +6,7 @@
     "description": "サッカーゲームのリーグ管理用API"
   },
   "paths": {
-    "/players": {
+    "/api/players": {
       "get": {
         "summary": "プレイヤー一覧の取得",
         "responses": {
@@ -29,7 +29,7 @@
         }
       }
     },
-    "/player": {
+    "/api/player": {
       "post": {
         "summary": "プレイヤーの登録",
         "requestBody": {
@@ -62,7 +62,7 @@
         }
       }
     },
-    "/matches": {
+    "/api/matches": {
       "get": {
         "summary": "試合一覧の取得",
         "responses": {
@@ -85,7 +85,7 @@
         }
       }
     },
-    "/match": {
+    "/api/match": {
       "post": {
         "summary": "試合結果の登録",
         "requestBody": {

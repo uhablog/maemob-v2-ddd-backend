@@ -142,8 +142,8 @@
         "type": "object",
         "properties": {
           "id": { "type": "integer", "example": 1 },
-          "homePlayer": { "type": "string", "example": "Taro" },
-          "awayPlayer": { "type": "string", "example": "Jiro" },
+          "homePlayerId": { "type": "integer", "example": 1 },
+          "awayPlayerId": { "type": "integer", "example": 2 },
           "homeScore": { "type": "integer", "example": 2 },
           "awayScore": { "type": "integer", "example": 1 },
           "match_date": { "type": "string", "format": "date-time" }
@@ -152,8 +152,8 @@
       "NewMatch": {
         "type": "object",
         "properties": {
-          "homePlayer": { "type": "string", "example": "Taro" },
-          "awayPlayer": { "type": "string", "example": "Jiro" },
+          "homePlayerId": { "type": "integer", "example": 1 },
+          "awayPlayerId": { "type": "integer", "example": 2 },
           "homeScore": { "type": "integer", "example": 2, "minimum": 0 },
           "awayScore": { "type": "integer", "example": 1, "minimum": 0 }
         },

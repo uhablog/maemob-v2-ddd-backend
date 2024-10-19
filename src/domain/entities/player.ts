@@ -13,7 +13,11 @@ export class Player {
     return this._points;
   }
 
-  addPoints(addPoints: Points): void {
-    this._points = this._points.add(addPoints);
+  add1Points(): void {
+    this._points = this._points.add1Points();
+  }
+
+  add3Points(): void {
+    this._points = this._points.add3Points();
   }
 }

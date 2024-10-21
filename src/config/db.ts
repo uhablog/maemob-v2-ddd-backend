@@ -3,8 +3,6 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: process.env.NODE_ENV === 'test' ? '.env.test': '.env'});
 
-console.log(process.env.DB_NAME?.length);
-
 const pool = new Pool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,

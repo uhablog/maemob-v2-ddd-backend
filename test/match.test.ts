@@ -18,8 +18,6 @@ beforeAll(async () => {
     .post('/api/player')
     .send({ name: 'Hanako' });
   createdPlayerIds[1] = responseHanako.body.id;
-
-  console.log('created player ids: ', createdPlayerIds);
 });
 
 // afterEach(async () => {

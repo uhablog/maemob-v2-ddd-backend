@@ -10,8 +10,8 @@ interface ResisterPlayerDTO {
 export class ResisterPlayerUseCase {
   constructor(private readonly playerRepository: IPlayerRepository) {}
 
-  async execute(data: ResisterPlayerDTO): Promise<void> {
+  async execute(data: ResisterPlayerDTO): Promise<number> {
     const player = new Player(1, new PlayerName(data.name), new Points(0));
-    await this.playerRepository.save(player);
+    return await this.playerRepository.save(player);
   }
 }

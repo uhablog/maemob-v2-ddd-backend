@@ -7,9 +7,13 @@ import { Points } from "../../domain/value-objects/points";
 export class PostgresPlayerRepository implements IPlayerRepository {
   constructor(private db: Pool){}
 
-  async save(player: Player): Promise<void>{
+  /**
+   * プレイヤーの登録を行う
+   * @param player 登録するプレイヤー
+   */
+  async save(player: Player): Promise<number>{
     try {
-      await this.db.query(`
+      const result = await this.db.query(`
         INSERT INTO players(
           name,
           points
@@ -17,12 +21,46 @@ export class PostgresPlayerRepository implements IPlayerRepository {
           $1,
           $2
         )
+        RETURNING id
       `, [player.name.name, player.points.value]);
+
+      const id: number = result.rows[0].id;
+      return id;
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      throw error;
     }
   }
 
+  /**
+   * ポイントの追加を行う
+   * @param id ポイント変更するユーザーID
+   * @param points 追加するポイント
+   */
+  async updatePoints(id: number, points: Points): Promise<void> {
+    try {
+      await this.db.query(`
+        UPDATE
+          players
+        SET
+          points = $1
+        WHERE
+          id = $2
+      ;`, [
+        points.value,
+        id
+      ]);
+
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  /**
+   * プレイヤーの取得を行う
+   * @returns 全てのプレイヤーを取得
+   */
   async findAll(): Promise<Player[]> {
     const result = await this.db.query(`
       SELECT
@@ -36,7 +74,12 @@ export class PostgresPlayerRepository implements IPlayerRepository {
     return result.rows.map(row => new Player(row.id, new PlayerName(row.name), new Points(row.points)))
   }
 
-  async findById(player: Player): Promise<Player> {
+  /**
+   * IDを指定してユーザーを取得
+   * @param player 取得するユーザー
+   * @returns 取得結果
+   */
+  async findById(id: number): Promise<Player> {
     try {
       const result = await this.db.query(`
         SELECT
@@ -47,7 +90,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
           players
         WHERE
           id = $1
-      `, [player.id]);
+      `, [id]);
 
       // 1でなければおかしい
       if (result.rowCount !== 1) {

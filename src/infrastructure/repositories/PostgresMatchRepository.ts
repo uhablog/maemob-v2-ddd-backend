@@ -9,12 +9,12 @@ import { Score } from "../../domain/value-objects/score";
 export class PostgresMatchRepository implements IMatchRepository {
   constructor(private readonly db: Pool){};
 
-  async save(match: Match): Promise<void> {
+  async save(match: Match): Promise<number> {
     try {
-      await this.db.query(`
+      const result = await this.db.query(`
         INSERT INTO matches(
           home_player_id,
-          awat_player_id,
+          away_player_id,
           home_score,
           away_score
         ) VALUES (
@@ -22,15 +22,21 @@ export class PostgresMatchRepository implements IMatchRepository {
           $2,
           $3,
           $4
-        );
+        )
+        RETURNING id, match_date
+        ;
       `, [
         match.homePlayerId,
         match.awayPlayerId,
         match.homeScore.value,
         match.awayScore.value
       ]);
+
+      const id: number = result.rows[0].id;
+      return id;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 

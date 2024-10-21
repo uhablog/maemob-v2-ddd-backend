@@ -37,9 +37,6 @@ describe('Player API', () => {
   it('GET /players - 全てのプレイヤーが取得できる', async () => {
     const response = await request(app).get('/api/players');
 
-    console.log('test body: ', response.body.results[0]);
-    console.log('test status: ', response.status);
-    console.log('test results.length: ', response.body.results.length);
     expect(response.status).toBe(200);
     expect(response.body.results.length).toBeGreaterThan(0);  // プレイヤーが存在することを確認
     expect(response.body.results[0]).toHaveProperty('name');

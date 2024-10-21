@@ -36,9 +36,9 @@ export class PlayerController {
     console.log(`resister player ${name}`);
 
     try {
-      await this.registerPlayerUseCase.execute({name});
+      const id = await this.registerPlayerUseCase.execute({name});
       res.status(201).json({
-        id: 1,
+        id: id,
         name: name,
         points: 0
       });

@@ -1,4 +1,3 @@
-import { Points } from "../value-objects/points";
 import { Score } from "../value-objects/score";
 
 export class Match {
@@ -34,6 +33,21 @@ export class Match {
 
   get matchDate(): Date {
     return this._matchDate;
+  }
+
+  /**
+   * 試合の勝者を取得する
+   * home | away | draw
+   * @returns 勝者(home or away or draw)
+   */
+  getWinner(): string {
+    if (this._homeScore.value > this._awayScore.value) {
+      return "home";
+    } else if (this._awayScore.value > this._homeScore.value) {
+      return "away";
+    }
+
+    return "draw";
   }
 
 }

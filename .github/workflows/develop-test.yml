@@ -1,10 +1,10 @@
 name: Run Tests
 on:
-  push:
+  pull_request:
     branches:
-      - develop
+      - main
 jobs:
-  test:
+  testWebAPI:
     runs-on: ubuntu-latest
 
     services:

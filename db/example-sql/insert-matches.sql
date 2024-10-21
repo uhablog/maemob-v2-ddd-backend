@@ -1,0 +1,1 @@
+insert into matches (home_player_id, away_player_id, home_score, away_score) values (1, 2, 3, 4);

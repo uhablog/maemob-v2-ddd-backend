@@ -2,6 +2,7 @@ import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from './openapi.json';
 import playerRouter from './interfaces/http/routes/playerRouter';
+import matchRouter from './interfaces/http/routes/matchRouter';
 
 const app = express();
 app.use(express.json());
@@ -9,7 +10,10 @@ app.use(express.json());
 // Swagger UIをセットアップ
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use('/api', playerRouter);
+app.use('/api', [
+  playerRouter,
+  matchRouter
+]);
 
 const PORT = process.env.PORT || 3000;
 

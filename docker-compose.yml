@@ -7,16 +7,20 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/init-local.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      retries: 5
   pgweb:
     container_name: pgweb
     restart: always
     image: sosedoff/pgweb
     env_file:
       - ./db/postgre-variables.env
-    ports: 
-      - "8081:8081" 
-    links: 
-      - postgres:postgres  # my database container is called postgres, not db
+    ports:
+      - "8081:8081"
+    links:
+      - postgres:postgres
     depends_on:
       - postgres

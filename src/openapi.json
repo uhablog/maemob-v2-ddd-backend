@@ -62,6 +62,32 @@
         }
       }
     },
+    "/api/player/{id}": {
+      "get": {
+        "summary": "プレイヤーの取得",
+        "responses": {
+          "200": {
+            "description": "プレイヤー情報",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schema/Player"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "IDの指定が数字ではない"
+          },
+          "404": {
+            "description": "該当するIDのユーザーが存在しない"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/matches": {
       "get": {
         "summary": "試合一覧の取得",

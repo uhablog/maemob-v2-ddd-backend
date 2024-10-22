@@ -48,7 +48,26 @@ describe('Match APIのテスト', () => {
     expect(response.body.homeScore).toBe(1);
     expect(response.body.awayScore).toBe(0);
 
-    // TODO: 勝点の確認(GET /player/:id開発後)
+    // 勝点の確認
+    const responseTaro = await request(app)
+      .get(`/api/player/${createdPlayerIds[0]}`)
+      .send()
+    
+    // 勝者はプラス3
+    expect(responseTaro.status).toBe(200);
+    expect(responseTaro.body.id).toBe(createdPlayerIds[0]);
+    expect(responseTaro.body.name).toBe('Taro');
+    expect(responseTaro.body.points).toBe(3);
+
+    const responseHanako = await request(app)
+      .get(`/api/player/${createdPlayerIds[1]}`)
+      .send()
+    
+    // 敗者はプラス0
+    expect(responseHanako.status).toBe(200);
+    expect(responseHanako.body.id).toBe(createdPlayerIds[1]);
+    expect(responseHanako.body.name).toBe('Hanako');
+    expect(responseHanako.body.points).toBe(0);
 
   });
 
@@ -69,7 +88,26 @@ describe('Match APIのテスト', () => {
     expect(response.body.homeScore).toBe(3);
     expect(response.body.awayScore).toBe(4);
 
-    // TODO: 勝点の確認(GET /player/:id開発後)
+    // 勝点の確認
+    const responseTaro = await request(app)
+      .get(`/api/player/${createdPlayerIds[0]}`)
+      .send()
+    
+    // 敗者はプラス0
+    expect(responseTaro.status).toBe(200);
+    expect(responseTaro.body.id).toBe(createdPlayerIds[0]);
+    expect(responseTaro.body.name).toBe('Taro');
+    expect(responseTaro.body.points).toBe(3);
+
+    const responseHanako = await request(app)
+      .get(`/api/player/${createdPlayerIds[1]}`)
+      .send()
+    
+    // 勝者はプラス3
+    expect(responseHanako.status).toBe(200);
+    expect(responseHanako.body.id).toBe(createdPlayerIds[1]);
+    expect(responseHanako.body.name).toBe('Hanako');
+    expect(responseHanako.body.points).toBe(3);
 
   });
   it('POST /match - 新しい試合が作成される(ドロー)', async () => {
@@ -89,8 +127,24 @@ describe('Match APIのテスト', () => {
     expect(response.body.homeScore).toBe(2);
     expect(response.body.awayScore).toBe(2);
 
-    // TODO: 勝点の確認(GET /player/:id開発後)
+    // 勝点の確認(引き分けで両者勝点1)
+    const responseTaro = await request(app)
+      .get(`/api/player/${createdPlayerIds[0]}`)
+      .send()
+    
+    expect(responseTaro.status).toBe(200);
+    expect(responseTaro.body.id).toBe(createdPlayerIds[0]);
+    expect(responseTaro.body.name).toBe('Taro');
+    expect(responseTaro.body.points).toBe(4);
 
+    const responseHanako = await request(app)
+      .get(`/api/player/${createdPlayerIds[1]}`)
+      .send()
+    
+    expect(responseHanako.status).toBe(200);
+    expect(responseHanako.body.id).toBe(createdPlayerIds[1]);
+    expect(responseHanako.body.name).toBe('Hanako');
+    expect(responseHanako.body.points).toBe(4);
   });
 
   it("POST /match - リクエストボディにhomePlayerId指定がないときは400", async () => {

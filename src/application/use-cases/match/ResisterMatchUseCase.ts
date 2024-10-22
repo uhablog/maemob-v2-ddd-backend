@@ -4,6 +4,7 @@ import { ResisterMatchDTO } from "../../dto/resisterMatchDto";
 import { Pool } from "pg";
 import { Match } from "../../../domain/entities/match";
 import { Score } from "../../../domain/value-objects/score";
+import { NotFoundError } from "../../../shared/errors/NotFoundError";
 
 export class ResisterMatchUseCase {
   constructor(
@@ -32,6 +33,14 @@ export class ResisterMatchUseCase {
       const winner = resisterMatch.getWinner();
       const homePlayer = await this.playerRepository.findById(resisterMatch.homePlayerId);
       const awayPlayer = await this.playerRepository.findById(resisterMatch.awayPlayerId);
+
+      if (homePlayer == null) {
+        throw new NotFoundError(`player id ${resisterMatch.homePlayerId}`);
+      }
+
+      if (awayPlayer == null) {
+        throw new NotFoundError(`player id ${resisterMatch.awayPlayerId}`)
+      }
 
       if (winner === 'home') {
         // ホームチームに勝点3

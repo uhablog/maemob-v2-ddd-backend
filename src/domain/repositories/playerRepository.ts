@@ -5,5 +5,5 @@ export interface IPlayerRepository {
   save(player: Player): Promise<number>;
   updatePoints(id: number, points: Points): Promise<void>;
   findAll(): Promise<Player[]>;
-  findById(id: number): Promise<Player>;
+  findById(id: number): Promise<Player | null>;
 }

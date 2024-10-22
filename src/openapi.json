@@ -71,7 +71,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schema/Player"
+                  "$ref": "#/components/schemas/Player"
                 }
               }
             }

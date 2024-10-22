@@ -79,7 +79,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
    * @param player 取得するユーザー
    * @returns 取得結果
    */
-  async findById(id: number): Promise<Player> {
+  async findById(id: number): Promise<Player | null> {
     try {
       const result = await this.db.query(`
         SELECT
@@ -94,7 +94,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
 
       // 1でなければおかしい
       if (result.rowCount !== 1) {
-        throw new Error("該当するユーザーが見つかりませんでした");
+        return null
       }
 
       return new Player(

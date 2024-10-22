@@ -76,7 +76,7 @@ describe('Player API', () => {
 
   it('【異常系】GET /player/{id} - 指定したIdのユーザーがいない', async () => {
     const response = await request(app)
-      .get(`/api/player/3`)
+      .get(`/api/player/1000`)
       .send();
 
     expect(response.status).toBe(404);

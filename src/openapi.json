@@ -6,9 +6,74 @@
     "description": "サッカーゲームのリーグ管理用API"
   },
   "paths": {
-    "/api/players": {
+    "/api/conventions": {
+      "get": {
+        "summary": "大会一覧の取得",
+        "responses": {
+          "200": {
+            "description": "大会一覧の取得",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Convention"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "summary": "大会の登録",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewConvention"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "大会の登録が成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Convention"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/conventions/{convention_id}/players": {
       "get": {
         "summary": "プレイヤー一覧の取得",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "プレイヤーのリスト",
@@ -23,15 +88,27 @@
               }
             }
           },
+          "404": {
+            "description": "指定された大会は存在しません"
+          },
           "500": {
             "description": "Internal server error"
           }
         }
-      }
-    },
-    "/api/player": {
+      },
       "post": {
         "summary": "プレイヤーの登録",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -56,15 +133,37 @@
           "400": {
             "description": "Invalid input"
           },
+          "404": {
+            "description": "指定された大会は存在しません"
+          },
           "500": {
             "description": "Internal server error"
           }
         }
       }
     },
-    "/api/player/{id}": {
+    "/api/conventions/{convention_id}/player/{id}": {
       "get": {
         "summary": "プレイヤーの取得",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "プレイヤー情報",
@@ -88,9 +187,20 @@
         }
       }
     },
-    "/api/matches": {
+    "/api/conventions/{convention_id}/matches": {
       "get": {
         "summary": "試合一覧の取得",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "試合のリスト",
@@ -105,15 +215,27 @@
               }
             }
           },
+          "404": {
+            "description": "指定された大会は存在しません"
+          },
           "500": {
             "description": "Internal server error"
           }
         }
-      }
-    },
-    "/api/match": {
+      },
       "post": {
         "summary": "試合結果の登録",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {
@@ -138,6 +260,9 @@
           "400": {
             "description": "Invalid input"
           },
+          "404": {
+            "description": "指定された大会は存在しません"
+          },
           "500": {
             "description": "Internal server error"
           }
@@ -147,6 +272,22 @@
   },
   "components": {
     "schemas": {
+      "Convention": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid"},
+          "name": { "type": "string", "example": "League 1"},
+          "held_date": { "type": "string", "format": "date", "example": "2024-10-25" }
+        }
+      },
+      "NewConvention": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "held_date": { "type": "string", "format": "date", "example": "2024-10-25" }
+        },
+        "required": [ "name" ]
+      },
       "Player": {
         "type": "object",
         "properties": {
@@ -184,8 +325,8 @@
           "awayScore": { "type": "integer", "example": 1, "minimum": 0 }
         },
         "required": [
-          "homePlayer",
-          "awayPlayer",
+          "homePlayerId",
+          "awayPlayerId",
           "homeScore",
           "awayScore"
         ]

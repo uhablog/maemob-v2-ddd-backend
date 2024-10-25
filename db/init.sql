@@ -3,14 +3,14 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE conventions (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
-  held_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  held_date DATE NOT NULL
 );
 
 CREATE TABLE players (
   id SERIAL PRIMARY KEY,
-  convention_id INT NOT NULL,
+  convention_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   points INT DEFAULT 0,
   CONSTRAINT fk_player_conventions FOREIGN KEY (convention_id)
@@ -19,7 +19,7 @@ CREATE TABLE players (
 
 CREATE TABLE matches (
   id SERIAL PRIMARY KEY,
-  convention_id INT NOT NULL,
+  convention_id UUID NOT NULL,
   home_player_id INT NOT NULL,
   away_player_id INT NOT NULL,
   home_score INT NOT NULL,

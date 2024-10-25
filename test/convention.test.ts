@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '../src/index';
-import { resetDatabase } from "./setupDatabase";
+import { closeDatabase, resetDatabase } from "./setupDatabase";
 import { getToday, getTomorrowDate } from './getDate';
 
 beforeAll(async () => {
@@ -10,6 +10,11 @@ beforeAll(async () => {
 afterEach(async () => {
   await resetDatabase(); // 各テスト後にリセット
 });
+
+afterAll(async () => {
+  await closeDatabase(); // テスト終了後に接続を終了
+});
+
 
 describe('【正常系】大会の作成', () => {
 
@@ -89,7 +94,7 @@ describe('【正常系】大会の取得', () => {
       });
     
     const getConventoinResponse = await request(app)
-      .post(`/api/conventions`)
+      .get(`/api/conventions`)
       .send();
 
     expect(getConventoinResponse.status).toBe(200);

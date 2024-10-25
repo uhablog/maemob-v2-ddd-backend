@@ -15,7 +15,6 @@ const matchController = new MatchController(findAllMatchesUseCase, resisterMatch
 const router = Router();
 
 router.get('/matches', (req, res) => matchController.findAll(req, res));
-
-router.post('/match', (req, res) => matchController.resisterMatch(req, res));
+router.post('/matchs', (req, res) => matchController.resisterMatch(req, res));
 
 export default router;

@@ -19,8 +19,8 @@ const playerController = new PlayerController(
 const router = Router();
 
 router.get('/players', (req, res) => playerController.findAll(req, res));
+router.post('/players', (req, res) => playerController.resister(req, res));
 
 router.get('/player/:id', (req, res) => playerController.findById(req, res));
-router.post('/player', (req, res) => playerController.resister(req, res))
 
 export default router;

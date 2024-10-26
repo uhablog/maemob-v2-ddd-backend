@@ -63,7 +63,7 @@ export class PostgresConventionRepository implements IConventionRepository {
           conventions
         WHERE
           id = $1
-      `, [id]);
+      `, [id.toString()]);
 
       // 1でなければnullを返却
       if (results.rowCount !== 1) {
@@ -73,7 +73,7 @@ export class PostgresConventionRepository implements IConventionRepository {
       return new Convention(
         new ConventionID(results.rows[0].id),
         new ConventionName(results.rows[0].name),
-        new ConventionHeldDate(results.rows[0].held_date),
+        new ConventionHeldDate(results.rows[0].held_date.toISOString().split('T')[0]),
       );
 
     } catch (error) {

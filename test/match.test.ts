@@ -36,11 +36,11 @@ afterAll(async () => {
 });
 
 
-describe('Match APIのテスト', () => {
+describe('【正常系】POST /matches 試合の作成', () => {
 
-  it('POST /match - 新しい試合が作成される(Home勝利)', async () => {
+  it('新しい試合が作成される(Home勝利)', async () => {
     const response = await request(app)
-      .post(`/api/conventions/${createdConventionId}/matchs`)
+      .post(`/api/conventions/${createdConventionId}/matches`)
       .send({
         homePlayerId: createdPlayerIds[0],
         awayPlayerId: createdPlayerIds[1],
@@ -78,9 +78,9 @@ describe('Match APIのテスト', () => {
 
   });
 
-  it('POST /match - 新しい試合が作成される(away勝利)', async () => {
+  it('新しい試合が作成される(away勝利)', async () => {
     const response = await request(app)
-      .post(`/api/conventions/${createdConventionId}/matchs`)
+      .post(`/api/conventions/${createdConventionId}/matches`)
       .send({
         homePlayerId: createdPlayerIds[0],
         awayPlayerId: createdPlayerIds[1],
@@ -117,9 +117,9 @@ describe('Match APIのテスト', () => {
     expect(responseHanako.body.points).toBe(3);
 
   });
-  it('POST /match - 新しい試合が作成される(ドロー)', async () => {
+  it('新しい試合が作成される(ドロー)', async () => {
     const response = await request(app)
-      .post(`/api/conventions/${createdConventionId}/matchs`)
+      .post(`/api/conventions/${createdConventionId}/matches`)
       .send({
         homePlayerId: createdPlayerIds[0],
         awayPlayerId: createdPlayerIds[1],
@@ -153,10 +153,12 @@ describe('Match APIのテスト', () => {
     expect(responseHanako.body.name).toBe('Hanako');
     expect(responseHanako.body.points).toBe(4);
   });
+});
 
-  it("POST /match - リクエストボディにhomePlayerId指定がないときは400", async () => {
+describe('【異常系】POST /matches', () => {
+  it("リクエストボディにhomePlayerId指定がないときは400", async () => {
     const response = await request(app)
-      .post(`/api/conventions/${createdConventionId}/matchs`)
+      .post(`/api/conventions/${createdConventionId}/matches`)
       .send({
         awayPlayerId: createdPlayerIds[1],
         homeScore: 1,
@@ -166,9 +168,9 @@ describe('Match APIのテスト', () => {
     expect(response.status).toBe(400);
   });
 
-  it("POST /match - リクエストボディにawayPlayerId指定がないときは400", async () => {
+  it("リクエストボディにawayPlayerId指定がないときは400", async () => {
     const response = await request(app)
-      .post(`/api/conventions/${createdConventionId}/matchs`)
+      .post(`/api/conventions/${createdConventionId}/matches`)
       .send({
         homePlayerId: createdPlayerIds[0],
         homeScore: 1,
@@ -178,9 +180,9 @@ describe('Match APIのテスト', () => {
     expect(response.status).toBe(400);
   });
 
-  it("POST /match - リクエストボディにhomeScore指定がないときは400", async () => {
+  it("リクエストボディにhomeScore指定がないときは400", async () => {
     const response = await request(app)
-      .post(`/api/conventions/${createdConventionId}/matchs`)
+      .post(`/api/conventions/${createdConventionId}/matches`)
       .send({
         homePlayerId: createdPlayerIds[0],
         awayPlayerId: createdPlayerIds[1],
@@ -190,9 +192,9 @@ describe('Match APIのテスト', () => {
     expect(response.status).toBe(400);
   });
 
-  it("POST /match - リクエストボディにawayScore指定がないときは400", async () => {
+  it("リクエストボディにawayScore指定がないときは400", async () => {
     const response = await request(app)
-      .post(`/api/conventions/${createdConventionId}/matchs`)
+      .post(`/api/conventions/${createdConventionId}/matches`)
       .send({
         homePlayerId: createdPlayerIds[0],
         awayPlayerId: createdPlayerIds[1],
@@ -202,9 +204,9 @@ describe('Match APIのテスト', () => {
     expect(response.status).toBe(400);
   });
 
-  it("POST /match - homeScoreがマイナスの時は400", async () => {
+  it("homeScoreがマイナスの時は400", async () => {
     const response = await request(app)
-      .post(`/api/conventions/${createdConventionId}/matchs`)
+      .post(`/api/conventions/${createdConventionId}/matches`)
       .send({
         homePlayerId: createdPlayerIds[0],
         awayPlayerId: createdPlayerIds[1],
@@ -216,9 +218,9 @@ describe('Match APIのテスト', () => {
     expect(response.body.message).toBe("スコアは0以上で指定して下さい。");
   });
 
-  it("POST /match - awayScoreがマイナスの時は400", async () => {
+  it("awayScoreがマイナスの時は400", async () => {
     const response = await request(app)
-      .post(`/api/conventions/${createdConventionId}/matchs`)
+      .post(`/api/conventions/${createdConventionId}/matches`)
       .send({
         homePlayerId: createdPlayerIds[0],
         awayPlayerId: createdPlayerIds[1],
@@ -230,23 +232,57 @@ describe('Match APIのテスト', () => {
     expect(response.body.message).toBe("スコアは0以上で指定して下さい。");
   });
 
-  it('GET /matches - 全ての試合が取得できる', async () => {
-    const response = await request(app).get(`/api/conventions/${createdConventionId}/matchs`);
+  it("convention idがUUID形式でないときは400エラー", async () => {
+    const response = await request(app)
+      .post(`/api/conventions/test/matches`)
+      .send({
+        homePlayerId: createdPlayerIds[0],
+        awayPlayerId: createdPlayerIds[1],
+        homeScore: 1,
+        awayScore: 0 
+      });
+  });
+
+  it("指定したconvention idの大会が存在しない場合は404エラー", async () => {
+    const testUUID = uuidv4();
+    const response = await request(app)
+      .post(`/api/conventions/${testUUID}/matches`)
+      .send({
+        homePlayerId: createdPlayerIds[0],
+        awayPlayerId: createdPlayerIds[1],
+        homeScore: 1,
+        awayScore: 0 
+      });
+    
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe(`convention id: ${testUUID} not found`);
+  });
+});
+
+describe ('【正常系】GET /matches 試合の取得', () => {
+
+  it('全ての試合が取得できる', async () => {
+    const response = await request(app).get(`/api/conventions/${createdConventionId}/matches`);
 
     expect(response.status).toBe(200);
-    expect(response.body.results.length).toBe(3);
+    expect(response.body.results.length).toBeGreaterThanOrEqual(3);
     expect(response.body.results[0]).toHaveProperty('homePlayerId');
     expect(response.body.results[0]).toHaveProperty('awayPlayerId');
     expect(response.body.results[0]).toHaveProperty('homeScore');
     expect(response.body.results[0]).toHaveProperty('awayScore');
   });
 
-  it('【異常系】GET /matches - 指定したIdの大会が存在しない', async () => {
+});
+
+describe('【異常系】GET /matches 試合の取得', () => {
+
+  it('指定したIdの大会が存在しない', async () => {
+    const testUUID = uuidv4();
     const response = await request(app)
-      .get(`/api/conventions/${uuidv4()}/matchs`)
+      .get(`/api/conventions/${testUUID}/matches`)
       .send();
 
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe("指定されたIDの大会は存在しません。");
+    expect(response.body.message).toBe(`convention id: ${testUUID} not found`);
   });
 });

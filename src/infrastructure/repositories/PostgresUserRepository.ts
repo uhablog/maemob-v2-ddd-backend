@@ -3,6 +3,7 @@ import { IPlayerRepository } from "../../domain/repositories/playerRepository";
 import { Player } from "../../domain/entities/player";
 import { PlayerName } from "../../domain/value-objects/playerName";
 import { Points } from "../../domain/value-objects/points";
+import { ConventionID } from "../../domain/value-objects/conventionId";
 
 export class PostgresPlayerRepository implements IPlayerRepository {
   constructor(private db: Pool){}
@@ -15,14 +16,16 @@ export class PostgresPlayerRepository implements IPlayerRepository {
     try {
       const result = await this.db.query(`
         INSERT INTO players(
+          convention_id,
           name,
           points
         ) VALUES (
           $1,
-          $2
+          $2,
+          $3
         )
         RETURNING id
-      `, [player.name.name, player.points.value]);
+      `, [player.convention_id.toString(), player.name.name, player.points.value]);
 
       const id: number = result.rows[0].id;
       return id;
@@ -61,17 +64,25 @@ export class PostgresPlayerRepository implements IPlayerRepository {
    * プレイヤーの取得を行う
    * @returns 全てのプレイヤーを取得
    */
-  async findAll(): Promise<Player[]> {
+  async findAll(conventionId: string): Promise<Player[]> {
     const result = await this.db.query(`
       SELECT
         id
+        ,convention_id
         ,name
         ,points
       FROM
-        players;
-    `);
+        players
+      WHERE
+        convention_id = $1
+      ;
+    `, [conventionId]);
 
-    return result.rows.map(row => new Player(row.id, new PlayerName(row.name), new Points(row.points)))
+    return result.rows.map(row => new Player(
+      row.id,
+      new ConventionID(row.convention_id),
+      new PlayerName(row.name),
+      new Points(row.points)))
   }
 
   /**
@@ -79,18 +90,20 @@ export class PostgresPlayerRepository implements IPlayerRepository {
    * @param player 取得するユーザー
    * @returns 取得結果
    */
-  async findById(id: number): Promise<Player | null> {
+  async findById(conventionId: string, id: number): Promise<Player | null> {
     try {
       const result = await this.db.query(`
         SELECT
           id
+          ,convention_id
           ,name
           ,points
         FROM
           players
         WHERE
-          id = $1
-      `, [id]);
+          convention_id = $1
+          AND id = $2
+      `, [conventionId, id]);
 
       // 1でなければおかしい
       if (result.rowCount !== 1) {
@@ -99,6 +112,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
 
       return new Player(
         result.rows[0].id,
+        new ConventionID(result.rows[0].convention_id),
         new PlayerName(result.rows[0].name),
         new Points(result.rows[0].points)
       );

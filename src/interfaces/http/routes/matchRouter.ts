@@ -5,17 +5,18 @@ import { PostgresMatchRepository } from "../../../infrastructure/repositories/Po
 import { MatchController } from "../controllers/matchController";
 import { ResisterMatchUseCase } from "../../../application/use-cases/match/ResisterMatchUseCase";
 import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresUserRepository";
+import { PostgresConventionRepository } from "../../../infrastructure/repositories/PostgresConventionRepository";
 
 const matchRepository = new PostgresMatchRepository(pool);
 const playerRepository = new PostgresPlayerRepository(pool);
-const findAllMatchesUseCase = new FindAllMatchesUseCase(matchRepository);
-const resisterMatchUseCase = new ResisterMatchUseCase(matchRepository, playerRepository, pool)
+const conventionRepository = new PostgresConventionRepository(pool);
+const findAllMatchesUseCase = new FindAllMatchesUseCase(matchRepository, conventionRepository);
+const resisterMatchUseCase = new ResisterMatchUseCase(matchRepository, playerRepository, conventionRepository, pool)
 const matchController = new MatchController(findAllMatchesUseCase, resisterMatchUseCase);
 
 const router = Router();
 
-router.get('/matches', (req, res) => matchController.findAll(req, res));
-
-router.post('/match', (req, res) => matchController.resisterMatch(req, res));
+router.get('/conventions/:convention_id/matches', (req, res) => matchController.findAll(req, res));
+router.post('/conventions/:convention_id/matches', (req, res) => matchController.resisterMatch(req, res));
 
 export default router;

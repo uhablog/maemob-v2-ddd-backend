@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { IMatchRepository } from "../../domain/repositories/matchRepository";
 import { Match } from "../../domain/entities/match";
 import { Score } from "../../domain/value-objects/score";
+import { ConventionID } from "../../domain/value-objects/conventionId";
 
 /**
  * 試合のリポジトリ
@@ -13,6 +14,7 @@ export class PostgresMatchRepository implements IMatchRepository {
     try {
       const result = await this.db.query(`
         INSERT INTO matches(
+          convention_id,
           home_player_id,
           away_player_id,
           home_score,
@@ -21,11 +23,13 @@ export class PostgresMatchRepository implements IMatchRepository {
           $1,
           $2,
           $3,
-          $4
+          $4,
+          $5
         )
         RETURNING id, match_date
         ;
       `, [
+        match.conventionId.toString(),
         match.homePlayerId,
         match.awayPlayerId,
         match.homeScore.value,
@@ -40,21 +44,25 @@ export class PostgresMatchRepository implements IMatchRepository {
     }
   }
 
-  async findAll(): Promise<Match[]> {
+  async findAll(conventionId: string): Promise<Match[]> {
     const results = await this.db.query(`
       SELECT
         id
+        ,convention_id
         ,home_player_id
         ,away_player_id
         ,home_score
         ,away_score
         ,match_date
       FROM
-        matches;
-    `);
+        matches
+      WHERE
+        convention_id = $1
+    `, [conventionId]);
 
     return results.rows.map(row => new Match(
       row.id,
+      new ConventionID(row.convention_id),
       row.home_player_id,
       row.away_player_id,
       new Score(row.home_score),

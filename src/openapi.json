@@ -268,6 +268,206 @@
           }
         }
       }
+    },
+    "/api/conventions/{convention_id}/matches/{match_id}/scorers": {
+      "get": {
+        "summary": "試合の得点者の一覧を取得",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "match_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "得点者のリスト",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Scorer"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "指定された大会もしくは試合が存在しない"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "summary": "得点者の登録",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "match_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewScorer"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "得点者の登録成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scorer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "指定された大会もしくは試合は存在しません"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/conventions/{convention_id}/matches/{match_id}/assists": {
+      "get": {
+        "summary": "試合のアシストの一覧を取得",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "match_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "アシストのリスト",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Assist"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "指定された大会もしくは試合が存在しない"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "summary": "アシストの登録",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "match_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewAssist"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "アシストの登録成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Assist"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "404": {
+            "description": "指定された大会もしくは試合は存在しません"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -330,6 +530,34 @@
           "homeScore",
           "awayScore"
         ]
+      },
+      "Scorer": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "match_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "example": "Leo Messi"}
+        }
+      },
+      "NewScorer": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Leo Messi"}
+        }
+      },
+      "Assist": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "match_id": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "example": "Iniesta"}
+        }
+      },
+      "NewAssist": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Iniesta"}
+        }
       }
     }
   }

@@ -16,7 +16,7 @@ export class ResisterMatchUseCase {
     private readonly db: Pool
   ) {}
 
-  async execute(match: ResisterMatchDTO): Promise<void> {
+  async execute(match: ResisterMatchDTO): Promise<number> {
 
     const conventionId = new ConventionID(match.conventionId);
 
@@ -41,7 +41,7 @@ export class ResisterMatchUseCase {
         new Score(match.awayScore),
         new Date()
       );
-      await this.matchRepository.save(resisterMatch);
+      const matchId = await this.matchRepository.save(resisterMatch);
 
       // 勝者を取得 home | away | draw
       const winner = resisterMatch.getWinner();
@@ -75,6 +75,7 @@ export class ResisterMatchUseCase {
       }
 
       await client.query("COMMIT");
+      return matchId;
 
     } catch (error) {
       client.query("ROLLBACK");

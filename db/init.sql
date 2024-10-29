@@ -28,3 +28,25 @@ CREATE TABLE matches (
   CONSTRAINT fk_match_conventions FOREIGN KEY (convention_id)
     REFERENCES conventions(id)
 );
+
+CREATE TABLE scorers (
+  id UUID PRIMARY KEY,
+  match_id INT NOT NULL,
+  player_id INT NOT NULL,
+  name VARCHAR(50) NOT NULL,
+  CONSTRAINT fk_scorer_players FOREIGN KEY (player_id)
+    REFERENCES players(id),
+  CONSTRAINT fk_scorer_matches FOREIGN KEY (match_id)
+    REFERENCES matches(id)
+);
+
+CREATE TABLE assists (
+  id UUID PRIMARY KEY,
+  match_id INT NOT NULL,
+  player_id INT NOT NULL,
+  name VARCHAR(50) NOT NULL,
+  CONSTRAINT fk_assists_players FOREIGN KEY (player_id)
+    REFERENCES players(id),
+  CONSTRAINT fk_assists_matches FOREIGN KEY (match_id)
+    REFERENCES matches(id)
+);

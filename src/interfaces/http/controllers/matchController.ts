@@ -74,7 +74,7 @@ export class MatchController {
     }
 
     try {
-      await this.resisterMatchUseCase.execute({
+      const matchId = await this.resisterMatchUseCase.execute({
         conventionId,
         homePlayerId,
         awayPlayerId,
@@ -83,7 +83,7 @@ export class MatchController {
       });
 
       res.status(201).json({
-        id: 1,
+        id: matchId,
         homePlayerId,
         awayPlayerId,
         homeScore,

@@ -536,19 +536,26 @@
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "match_id": { "type": "string", "format": "uuid" },
+          "player_id": { "type": "integer", "example": 1},
           "name": { "type": "string", "example": "Leo Messi"}
         }
       },
       "NewScorer": {
         "type": "object",
         "properties": {
+          "player_id": { "type": "integer", "example": 1},
           "name": { "type": "string", "example": "Leo Messi"}
-        }
+        },
+        "required": [
+          "player_id",
+          "name"
+        ]
       },
       "Assist": {
         "type": "object",
         "properties": {
           "id": { "type": "string", "format": "uuid" },
+          "player_id": { "type": "integer", "example": 1},
           "match_id": { "type": "string", "format": "uuid" },
           "name": { "type": "string", "example": "Iniesta"}
         }
@@ -556,8 +563,13 @@
       "NewAssist": {
         "type": "object",
         "properties": {
+          "player_id": { "type": "integer", "example": 1},
           "name": { "type": "string", "example": "Iniesta"}
-        }
+        },
+        "required": [
+          "player_id",
+          "name"
+        ]
       }
     }
   }

@@ -8,8 +8,8 @@ import { ConventionID } from "../../domain/value-objects/conventionId";
  * 試合のリポジトリ
  */
 export class PostgresMatchRepository implements IMatchRepository {
-  constructor(private readonly db: Pool){};
-
+  constructor(private readonly db: Pool){}
+  
   async save(match: Match): Promise<number> {
     try {
       const result = await this.db.query(`
@@ -70,4 +70,37 @@ export class PostgresMatchRepository implements IMatchRepository {
       row.match_date
     ));
   }
+
+  async findById(id: number): Promise<Match | null> {
+    const result = await this.db.query(`
+      SELECT
+        id
+        ,convention_id
+        ,home_player_id
+        ,away_player_id
+        ,home_score
+        ,away_score
+        ,match_date
+      FROM
+        matches
+      WHERE
+        id = $1
+    `, [ id ]);
+
+    // 取得数が1でない場合
+    if (result.rowCount !== 1) {
+      return null;
+    }
+
+    return new Match(
+      result.rows[0].id,
+      new ConventionID(result.rows[0].convention_id),
+      result.rows[0].home_player_id,
+      result.rows[0].away_player_id,
+      new Score(result.rows[0].home_score),
+      new Score(result.rows[0].away_score),
+      result.rows[0].match_date
+    );
+  };
+
 }

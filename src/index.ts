@@ -1,9 +1,12 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from './openapi.json';
+
 import playerRouter from './interfaces/http/routes/playerRouter';
 import matchRouter from './interfaces/http/routes/matchRouter';
 import conventionRouter from './interfaces/http/routes/conventionRouter';
+import scorerRouter from './interfaces/http/routes/scorerRouter';
+import assistRouter from './interfaces/http/routes/assistRouter';
 
 const app = express();
 app.use(express.json());
@@ -14,7 +17,9 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/api', [
   playerRouter,
   matchRouter,
-  conventionRouter
+  conventionRouter,
+  scorerRouter,
+  assistRouter
 ]);
 
 const PORT = process.env.PORT || 3000;

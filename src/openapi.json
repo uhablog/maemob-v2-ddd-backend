@@ -287,8 +287,7 @@
             "name": "match_id",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "number"
             }
           }
         ],
@@ -331,8 +330,7 @@
             "name": "match_id",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "number"
             }
           }
         ],
@@ -387,8 +385,7 @@
             "name": "match_id",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "number"
             }
           }
         ],
@@ -431,8 +428,7 @@
             "name": "match_id",
             "required": true,
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "number"
             }
           }
         ],

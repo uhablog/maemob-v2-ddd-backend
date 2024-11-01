@@ -624,7 +624,7 @@
           "player_id": { "type": "integer", "example": 1 },
           "player_name": { "type": "string", "example": "player1"},
           "name": { "type": "integer", "example": "Leo Messi" },
-          "count": { "type": "number", "minimum": 1, "example": 10 }
+          "scorer_count": { "type": "number", "minimum": 1, "example": 10 }
         }
       }
     }

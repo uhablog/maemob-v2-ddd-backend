@@ -5,14 +5,22 @@ import { ResisterScorerUseCase } from "../../../application/use-cases/scorer/res
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { BadRequestError } from "../../../shared/errors/BadRequest";
 import { isPositiveInteger } from "../../../shared/common/positiveInteger";
+import { isValidUUID } from "../../../shared/common/ValidUUID";
+import { FindScorerRankingByConventionIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByConventionId";
 
 export class ScorerContoroller {
 
   constructor(
     private readonly findScorerByMatchIdUseCase: FindScorerByMatchIdUseCase,
-    private readonly resisterScorerUseCase: ResisterScorerUseCase
+    private readonly resisterScorerUseCase: ResisterScorerUseCase,
+    private readonly findScorerRankingByConventionIdUseCase: FindScorerRankingByConventionIdUseCase
   ) {}
 
+  /**
+   * 試合に関する得点者を取得する
+   * @param req パスパラメータでconvention_id(uuid), match_id(number)を指定
+   * @param res 
+   */
   async findScorer(req: Request, res: Response) {
 
     const conventionId = req.params.convention_id;
@@ -34,6 +42,12 @@ export class ScorerContoroller {
     }
   };
 
+  /**
+   * 試合に対して得点者の登録を行う
+   * @param req name, player_idをbodyで指定必須
+   * @param res 
+   * @returns HTTP レスポンスの返却
+   */
   async resisterScorer(req: Request, res: Response) {
 
     const { name, player_id } = req.body;
@@ -77,7 +91,52 @@ export class ScorerContoroller {
       } else {
         res.status(500).json({ message: "Internal Server Error"});
       }
-      
+    }
+  };
+
+  async findScorerRanking(req: Request, res: Response) {
+
+    const conventionId = req.query.convention_id as string;
+    const playerId = req.query.player_id as string; 
+
+    // 大会・プレイヤーどちらも指定されていない場合は400エラーを返却する
+    if (conventionId === undefined && playerId === undefined) {
+      res.status(400).json({ message: "convention_idもしくはplayer_idどちらか1つを指定して下さい。" });
+      return;
+    } else if (
+      conventionId !== undefined
+      && playerId !== undefined
+    ) { // 大会・プレイヤーどちらも指定されている
+      res.status(400).json({ message: "convention_idもしくはplayer_idどちらか1つを指定して下さい。" });
+      return;
+    };
+
+    // convention_idがUUID形式かチェック
+    if (conventionId !== undefined && !isValidUUID(conventionId)) {
+      res.status(400).json({ message: "convention_idはUUID形式で指定して下さい。" });
+      return;
+    }
+
+    // player_idが1以上の整数かチェック
+    if (playerId !== undefined && !isPositiveInteger(playerId)) {
+      res.status(400).json({ message: "player_idは1以上の整数で指定して下さい。" });
+      return;
+    }
+
+    try {
+      let results;
+      if (conventionId !== undefined) {
+        results = await this.findScorerRankingByConventionIdUseCase.execute(conventionId);
+        res.status(200).json(results);
+      }
+    } catch (error) {
+      console.error(error);
+
+      if (error instanceof NotFoundError) {
+        res.status(error.statusCode).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Internal Server Error" });
+      }
     }
 
   };

@@ -6,6 +6,7 @@ import { PostgresConventionRepository } from "../../../infrastructure/repositori
 import { PostgresMatchRepository } from "../../../infrastructure/repositories/PostgresMatchRepository";
 import { PostgresScorerRepository } from "../../../infrastructure/repositories/PostgresScorerRepository";
 import { ScorerContoroller } from "../controllers/scorerController";
+import { FindScorerRankingByConventionIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByConventionId";
 
 const matchRepository = new PostgresMatchRepository(pool);
 const conventionRepository = new PostgresConventionRepository(pool);
@@ -13,12 +14,25 @@ const socrerRepository = new PostgresScorerRepository(pool);
 
 const findScorerByMatchIdUseCase = new FindScorerByMatchIdUseCase(socrerRepository, matchRepository, conventionRepository);
 const resisterScorerUseCase = new ResisterScorerUseCase(socrerRepository, matchRepository, conventionRepository);
+const findScorerRankingByConventionIdUseCase = new FindScorerRankingByConventionIdUseCase(socrerRepository, conventionRepository);
 
-const scorerController = new ScorerContoroller(findScorerByMatchIdUseCase, resisterScorerUseCase);
+const scorerController = new ScorerContoroller(
+  findScorerByMatchIdUseCase,
+  resisterScorerUseCase,
+  findScorerRankingByConventionIdUseCase
+);
 
 const router = Router();
 
+/**
+ * 大会・試合に関するスコアの取得・追加
+ */
 router.get(`/conventions/:convention_id/matches/:match_id/scorers`, (req, res) => scorerController.findScorer(req, res));
 router.post(`/conventions/:convention_id/matches/:match_id/scorers`, (req, res) => scorerController.resisterScorer(req, res));
+
+/**
+ * 得点ランキングの取得
+ */
+router.get(`/scorers`, (req, res) => scorerController.findScorerRanking(req, res));
 
 export default router;

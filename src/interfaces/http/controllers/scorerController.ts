@@ -7,13 +7,15 @@ import { BadRequestError } from "../../../shared/errors/BadRequest";
 import { isPositiveInteger } from "../../../shared/common/positiveInteger";
 import { isValidUUID } from "../../../shared/common/ValidUUID";
 import { FindScorerRankingByConventionIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByConventionId";
+import { FindScorerRankingByPlayerIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByPlayerId";
 
 export class ScorerContoroller {
 
   constructor(
     private readonly findScorerByMatchIdUseCase: FindScorerByMatchIdUseCase,
     private readonly resisterScorerUseCase: ResisterScorerUseCase,
-    private readonly findScorerRankingByConventionIdUseCase: FindScorerRankingByConventionIdUseCase
+    private readonly findScorerRankingByConventionIdUseCase: FindScorerRankingByConventionIdUseCase,
+    private readonly findScorerRankingByPlayerIdUseCase: FindScorerRankingByPlayerIdUseCase,
   ) {}
 
   /**
@@ -125,10 +127,14 @@ export class ScorerContoroller {
 
     try {
       let results;
+
       if (conventionId !== undefined) {
         results = await this.findScorerRankingByConventionIdUseCase.execute(conventionId);
-        res.status(200).json(results);
+      } else if (playerId !== undefined) {
+        results = await this.findScorerRankingByPlayerIdUseCase.execute(Number(playerId));
       }
+
+      res.status(200).json(results);
     } catch (error) {
       console.error(error);
 

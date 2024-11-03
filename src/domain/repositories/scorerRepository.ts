@@ -6,4 +6,5 @@ export interface IScorerRepository {
   save(scorer: Scorer): Promise<void>;
   findByMatchId(matchId: number): Promise<Scorer[]>;
   findScorerRankingByConventionId(conventionId: ConventionID): Promise<ScorerCount[]>;
+  findScorerRankingByPlayerId(playerId: number): Promise<ScorerCount[]>;
 }

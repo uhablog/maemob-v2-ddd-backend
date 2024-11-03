@@ -147,16 +147,16 @@ describe('【正常系】GET /scorers 得点ランキングの取得', () => {
 
     const testData = await createTestData();
     const response = await request(app)
-      .get(`/api/scorer?convention_id=${testData.conventionId}`)
+      .get(`/api/scorers?convention_id=${testData.conventionId}`)
       .send();
 
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(5)
+    expect(response.body.length).toBe(6)
     expect(response.body[0].name).toBe("Leo Messi");
-    expect(response.body[0].count).toBe(4);
+    expect(response.body[0].score_count).toBe(4);
     expect(response.body[0].player_id).toBe(testData.playerIds[0]);
     expect(response.body[1].name).toBe("Vini");
-    expect(response.body[1].count).toBe(2);
+    expect(response.body[1].score_count).toBe(2);
     expect(response.body[1].player_id).toBe(testData.playerIds[1]);
 
   });
@@ -165,16 +165,16 @@ describe('【正常系】GET /scorers 得点ランキングの取得', () => {
 
     const testData = await createTestData();
     const response = await request(app)
-      .get(`/api/scorer?player_id=${testData.playerIds[1]}`)
+      .get(`/api/scorers?player_id=${testData.playerIds[1]}`)
       .send();
 
     expect(response.status).toBe(200);
     expect(response.body.length).toBe(2)
     expect(response.body[0].name).toBe("Vini");
-    expect(response.body[0].count).toBe(2);
+    expect(response.body[0].score_count).toBe(2);
     expect(response.body[0].player_id).toBe(testData.playerIds[1]);
     expect(response.body[1].name).toBe("Fed");
-    expect(response.body[1].count).toBe(1);
+    expect(response.body[1].score_count).toBe(1);
     expect(response.body[1].player_id).toBe(testData.playerIds[1]);
   });
 
@@ -188,7 +188,7 @@ describe('【異常系】GET /scorers 得点ランキングの取得', () => {
   it('大会・プレイヤーどちらも指定されていない', async () => {
 
     const response = await request(app)
-      .get(`/api/scorer`)
+      .get(`/api/scorers`)
       .send();
 
     expect(response.status).toBe(400);
@@ -199,7 +199,7 @@ describe('【異常系】GET /scorers 得点ランキングの取得', () => {
   it('大会・プレイヤーどちら指定されている', async () => {
 
     const response = await request(app)
-      .get(`/api/scorer?convention_id=${uuidv4()}&player_id=${1}`)
+      .get(`/api/scorers?convention_id=${uuidv4()}&player_id=${1}`)
       .send();
 
     expect(response.status).toBe(400);
@@ -210,7 +210,7 @@ describe('【異常系】GET /scorers 得点ランキングの取得', () => {
   it('指定したconvention idがuuid形式ではない', async () => {
 
     const response = await request(app)
-      .get(`/api/scorer?convention_id=string`)
+      .get(`/api/scorers?convention_id=string`)
       .send();
 
     expect(response.status).toBe(400);
@@ -220,11 +220,11 @@ describe('【異常系】GET /scorers 得点ランキングの取得', () => {
   it('指定したplayer idが1以上の整数ではない', async () => {
 
     const response = await request(app)
-      .get(`/api/scorer?player_id=0`)
+      .get(`/api/scorers?player_id=0`)
       .send();
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("player_idは1以上の整数で指定してください。");
+    expect(response.body.message).toBe("player_idは1以上の整数で指定して下さい。");
 
   });
 
@@ -235,10 +235,10 @@ describe('【異常系】GET /scorers 得点ランキングの取得', () => {
 
     const testUUID = uuidv4();
     const response = await request(app)
-      .get(`/api/scorer?convention_id=${testUUID}`)
+      .get(`/api/scorers?convention_id=${testUUID}`)
       .send();
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(404);
     expect(response.body.message).toBe(`convention id: ${testUUID} not found`);
 
   });
@@ -247,10 +247,10 @@ describe('【異常系】GET /scorers 得点ランキングの取得', () => {
 
     const testPlayerId = 5000;
     const response = await request(app)
-      .get(`/api/scorer?player_id=${testPlayerId}`)
+      .get(`/api/scorers?player_id=${testPlayerId}`)
       .send();
 
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(404);
     expect(response.body.message).toBe(`player id: ${testPlayerId} not found`);
 
   });

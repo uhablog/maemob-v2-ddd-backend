@@ -19,7 +19,7 @@ export class FindPlayerByIdUseCase {
       throw new NotFoundError(`convention id: ${conventionId}`);
     }
 
-    const player = await this.playerRepository.findById(conventionId, id);
+    const player = await this.playerRepository.findById(id);
 
     if (player == null) {
       throw new NotFoundError(`player id ${id}`);

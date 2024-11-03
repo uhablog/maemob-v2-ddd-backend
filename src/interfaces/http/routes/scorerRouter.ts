@@ -7,19 +7,24 @@ import { PostgresMatchRepository } from "../../../infrastructure/repositories/Po
 import { PostgresScorerRepository } from "../../../infrastructure/repositories/PostgresScorerRepository";
 import { ScorerContoroller } from "../controllers/scorerController";
 import { FindScorerRankingByConventionIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByConventionId";
+import { FindScorerRankingByPlayerIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByPlayerId";
+import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresUserRepository";
 
 const matchRepository = new PostgresMatchRepository(pool);
 const conventionRepository = new PostgresConventionRepository(pool);
 const socrerRepository = new PostgresScorerRepository(pool);
+const playerRepository = new PostgresPlayerRepository(pool);
 
 const findScorerByMatchIdUseCase = new FindScorerByMatchIdUseCase(socrerRepository, matchRepository, conventionRepository);
 const resisterScorerUseCase = new ResisterScorerUseCase(socrerRepository, matchRepository, conventionRepository);
 const findScorerRankingByConventionIdUseCase = new FindScorerRankingByConventionIdUseCase(socrerRepository, conventionRepository);
+const findScorerRankingByPlayerIdUseCase = new FindScorerRankingByPlayerIdUseCase(socrerRepository, playerRepository);
 
 const scorerController = new ScorerContoroller(
   findScorerByMatchIdUseCase,
   resisterScorerUseCase,
-  findScorerRankingByConventionIdUseCase
+  findScorerRankingByConventionIdUseCase,
+  findScorerRankingByPlayerIdUseCase
 );
 
 const router = Router();

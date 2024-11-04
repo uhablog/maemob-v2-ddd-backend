@@ -45,8 +45,8 @@ export class ResisterMatchUseCase {
 
       // 勝者を取得 home | away | draw
       const winner = resisterMatch.getWinner();
-      const homePlayer = await this.playerRepository.findById(resisterMatch.conventionId.toString(), resisterMatch.homePlayerId);
-      const awayPlayer = await this.playerRepository.findById(resisterMatch.conventionId.toString(), resisterMatch.awayPlayerId);
+      const homePlayer = await this.playerRepository.findById(resisterMatch.homePlayerId);
+      const awayPlayer = await this.playerRepository.findById(resisterMatch.awayPlayerId);
 
       if (homePlayer == null) {
         throw new NotFoundError(`player id ${resisterMatch.homePlayerId}`);

@@ -90,7 +90,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
    * @param player 取得するユーザー
    * @returns 取得結果
    */
-  async findById(conventionId: string, id: number): Promise<Player | null> {
+  async findById(id: number): Promise<Player | null> {
     try {
       const result = await this.db.query(`
         SELECT
@@ -101,9 +101,8 @@ export class PostgresPlayerRepository implements IPlayerRepository {
         FROM
           players
         WHERE
-          convention_id = $1
-          AND id = $2
-      `, [conventionId, id]);
+          id = $1
+      `, [ id ]);
 
       // 1でなければおかしい
       if (result.rowCount !== 1) {
@@ -120,5 +119,5 @@ export class PostgresPlayerRepository implements IPlayerRepository {
       console.log(error);
       throw error;
     }
-  }
+  };
 };

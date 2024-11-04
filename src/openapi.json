@@ -464,6 +464,56 @@
           }
         }
       }
+    },
+    "/api/scorers": {
+      "get": {
+        "summary": "得点ランキングを取得",
+        "description": "クエリパラメータで大会・プレイヤーごとのランキングを取得可能",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "convention_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "player_id",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "minimum": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "得点者のランキングを取得",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScorerRank"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input"
+          },
+          "404": {
+            "description": "指定した大会もしくはプレイヤーが存在しない"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -566,6 +616,16 @@
           "player_id",
           "name"
         ]
+      },
+      "ScorerRank": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "player_id": { "type": "integer", "example": 1 },
+          "player_name": { "type": "string", "example": "player1"},
+          "name": { "type": "integer", "example": "Leo Messi" },
+          "scorer_count": { "type": "number", "minimum": 1, "example": 10 }
+        }
       }
     }
   }

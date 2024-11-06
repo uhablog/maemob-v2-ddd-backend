@@ -4,9 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 import app from '../src/index';
 import { closeDatabase, resetDatabase } from './setupDatabase';
 
-beforeAll(async () => {
-  await resetDatabase();
-});
+// beforeAll(async () => {
+//   await resetDatabase();
+// });
 
 afterAll(async () => {
   await closeDatabase();

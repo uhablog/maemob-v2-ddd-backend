@@ -4,9 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 import app from "../src";
 import { closeDatabase, resetDatabase } from "./setupDatabase";
 
-beforeAll(async () => {
-  await resetDatabase();
-});
+// beforeAll(async () => {
+//   await resetDatabase();
+// });
 
 let testData: TestData;
 beforeEach(async () => {
@@ -127,7 +127,6 @@ describe('【正常系】GET /scorers 得点ランキングの取得', () => {
   it('特定の大会の得点ランキングが取得できる', async () => {
 
     try {
-      // const testData = await createTestData();
       const response = await request(app)
         .get(`/api/scorers?convention_id=${testData.conventionId}`)
         .send();
@@ -151,7 +150,6 @@ describe('【正常系】GET /scorers 得点ランキングの取得', () => {
 
     try {
       
-      // const testData = await createTestData();
       const response = await request(app)
         .get(`/api/scorers?player_id=${testData.playerIds[1]}`)
         .send();

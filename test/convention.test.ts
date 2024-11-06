@@ -3,9 +3,9 @@ import app from '../src/index';
 import { closeDatabase, resetDatabase } from "./setupDatabase";
 import { getToday, getTomorrowDate } from './getDate';
 
-beforeAll(async () => {
-  await resetDatabase();
-});
+// beforeAll(async () => {
+//   await resetDatabase();
+// });
 
 // afterEach(async () => {
 //   await resetDatabase(); // 各テスト後にリセット

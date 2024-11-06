@@ -9,7 +9,7 @@ const createdPlayerIds: number[] = [];
 let createdConventionId: string = "";
 
 beforeAll(async () => {
-  await resetDatabase(); // テスト開始前にデータベースを初期化
+  // await resetDatabase(); // テスト開始前にデータベースを初期化
 
   const responseConvention = await request(app)
     .post('/api/conventions')

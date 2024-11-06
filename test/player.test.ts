@@ -4,9 +4,9 @@ import { closeDatabase, resetDatabase } from './setupDatabase';
 
 import { v4 as uuidv4 } from 'uuid';
 
-beforeAll(async () => {
-  await resetDatabase(); // テスト開始前にデータベースを初期化
-});
+// beforeAll(async () => {
+//   await resetDatabase(); // テスト開始前にデータベースを初期化
+// });
 
 // afterEach(async () => {
 //   await resetDatabase();

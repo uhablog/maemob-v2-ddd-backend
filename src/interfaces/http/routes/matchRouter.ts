@@ -4,7 +4,7 @@ import pool from "../../../config/db";
 import { PostgresMatchRepository } from "../../../infrastructure/repositories/PostgresMatchRepository";
 import { MatchController } from "../controllers/matchController";
 import { ResisterMatchUseCase } from "../../../application/use-cases/match/ResisterMatchUseCase";
-import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresUserRepository";
+import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresPlayerRepository";
 import { PostgresConventionRepository } from "../../../infrastructure/repositories/PostgresConventionRepository";
 
 const matchRepository = new PostgresMatchRepository(pool);

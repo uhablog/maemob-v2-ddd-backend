@@ -8,7 +8,7 @@ import { PostgresScorerRepository } from "../../../infrastructure/repositories/P
 import { ScorerContoroller } from "../controllers/scorerController";
 import { FindScorerRankingByConventionIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByConventionId";
 import { FindScorerRankingByPlayerIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByPlayerId";
-import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresUserRepository";
+import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresPlayerRepository";
 
 const matchRepository = new PostgresMatchRepository(pool);
 const conventionRepository = new PostgresConventionRepository(pool);

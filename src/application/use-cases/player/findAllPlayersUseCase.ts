@@ -20,7 +20,7 @@ export class FindAllPlayersUseCase {
     }
 
     // 大会に紐づいたプレイヤーの取得
-    const players = await this.playerRepository.findAll(conventionId);
+    const players = await this.playerRepository.findByConventionId(conventionId);
     return players.map((player) => ({
       id: player.id,
       name: player.name.name,

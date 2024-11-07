@@ -62,9 +62,9 @@ export class PostgresPlayerRepository implements IPlayerRepository {
 
   /**
    * プレイヤーの取得を行う
-   * @returns 全てのプレイヤーを取得
+   * @returns 全てのプレイヤーをポイント順で取得
    */
-  async findAll(conventionId: string): Promise<Player[]> {
+  async findByConventionId(conventionId: string): Promise<Player[]> {
     const result = await this.db.query(`
       SELECT
         id
@@ -75,6 +75,8 @@ export class PostgresPlayerRepository implements IPlayerRepository {
         players
       WHERE
         convention_id = $1
+      ORDER BY
+        points desc
       ;
     `, [conventionId]);
 

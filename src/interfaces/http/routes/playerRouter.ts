@@ -2,7 +2,7 @@ import { Router } from "express";
 import { FindAllPlayersUseCase } from "../../../application/use-cases/player/findAllPlayersUseCase";
 import { ResisterPlayerUseCase } from "../../../application/use-cases/player/RegisterPlayerUseCase";
 import pool from "../../../config/db";
-import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresUserRepository";
+import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresPlayerRepository";
 import { PlayerController } from "../controllers/playerController";
 import { FindPlayerByIdUseCase } from "../../../application/use-cases/player/findPlayerByIdUseCase";
 import { PostgresConventionRepository } from "../../../infrastructure/repositories/PostgresConventionRepository";

@@ -63,6 +63,7 @@
     "/api/conventions/{convention_id}/players": {
       "get": {
         "summary": "プレイヤー一覧の取得",
+        "description": "大会参加プレイヤーを勝ち点順で取得",
         "parameters": [
           {
             "in": "path",

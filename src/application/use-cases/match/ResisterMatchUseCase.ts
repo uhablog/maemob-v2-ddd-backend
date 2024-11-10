@@ -41,7 +41,7 @@ export class ResisterMatchUseCase {
         new Score(match.awayScore),
         new Date()
       );
-      const matchId = await this.matchRepository.save(resisterMatch);
+      const matchId = await this.matchRepository.save(client, resisterMatch);
 
       // 勝者を取得 home | away | draw
       const winner = resisterMatch.getWinner();

@@ -33,7 +33,7 @@ export class ResisterMatchUseCase {
 
       // 登録用の試合エンティティ作成
       const resisterMatch = new Match(
-        1,
+        null,
         conventionId,
         match.homePlayerId,
         match.awayPlayerId,
@@ -45,8 +45,8 @@ export class ResisterMatchUseCase {
 
       // 勝者を取得 home | away | draw
       const winner = resisterMatch.getWinner();
-      const homePlayer = await this.playerRepository.findById(resisterMatch.homePlayerId);
-      const awayPlayer = await this.playerRepository.findById(resisterMatch.awayPlayerId);
+      const homePlayer = await this.playerRepository.findById(client, resisterMatch.homePlayerId);
+      const awayPlayer = await this.playerRepository.findById(client, resisterMatch.awayPlayerId);
 
       if (homePlayer == null) {
         throw new NotFoundError(`player id ${resisterMatch.homePlayerId}`);
@@ -56,32 +56,44 @@ export class ResisterMatchUseCase {
         throw new NotFoundError(`player id ${resisterMatch.awayPlayerId}`)
       }
 
+      // 両者の得点・失点数の加算
+      homePlayer.addGoals(match.homeScore);
+      homePlayer.addConcede(match.awayScore);
+      awayPlayer.addGoals(match.awayScore);
+      awayPlayer.addConcede(match.homeScore);
+
       if (winner === 'home') {
         // ホームチームに勝点3
-        homePlayer.add3Points();
-        await this.playerRepository.updatePoints(homePlayer.id, homePlayer.points);
+        homePlayer.recordWins();
+
+        // アウェイチームの負け数追加
+        awayPlayer.recordLosses();
+
       } else if (winner === 'away') {
         // アウェイチームに勝点3
-        awayPlayer.add3Points();
-        await this.playerRepository.updatePoints(awayPlayer.id, awayPlayer.points);
+        awayPlayer.recordWins();
+
+        // ホームチームの負け数追加
+        homePlayer.recordLosses();
       } else if (winner === 'draw') {
 
         // 両者に勝点1
-        homePlayer.add1Points();
-        await this.playerRepository.updatePoints(homePlayer.id, homePlayer.points);
-
-        awayPlayer.add1Points();
-        await this.playerRepository.updatePoints(awayPlayer.id, awayPlayer.points);
+        homePlayer.recordDraws();
+        awayPlayer.recordDraws();
       }
 
+      await this.playerRepository.save(client, homePlayer);
+      await this.playerRepository.save(client, awayPlayer);
+
       await client.query("COMMIT");
+
       return matchId;
 
     } catch (error) {
-      client.query("ROLLBACK");
+      await client.query("ROLLBACK");
       throw error;
     } finally {
-      client.release();
+      await client.release();
     }
   }
 }

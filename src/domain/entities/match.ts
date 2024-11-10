@@ -4,7 +4,7 @@ import { Score } from "../value-objects/score";
 export class Match {
 
   constructor(
-    private readonly _id: number,
+    private readonly _id: number | null,
     private readonly _conventionId: ConventionID,
     private readonly _homePlayerId: number,
     private readonly _awayPlayerId: number,
@@ -13,7 +13,7 @@ export class Match {
     private readonly _matchDate: Date
   ){}
 
-  get id(): number {
+  get id(): number | null {
     return this._id;
   }
 

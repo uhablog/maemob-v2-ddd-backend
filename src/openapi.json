@@ -541,9 +541,9 @@
           "id": { "type": "integer", "example": 1 },
           "name": { "type": "string", "example": "Taro" },
           "points": { "type": "integer", "example": 3 },
-          "win": { "type": "integer", "example": 1},
-          "draw": { "type": "integer", "example": 1},
-          "lose": { "type": "integer", "example": 1},
+          "wins": { "type": "integer", "example": 1},
+          "draws": { "type": "integer", "example": 1},
+          "losses": { "type": "integer", "example": 1},
           "goals": { "type": "integer", "example": 1},
           "concede": {"type": "integer", "example": 1}
         }

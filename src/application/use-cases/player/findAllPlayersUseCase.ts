@@ -1,3 +1,4 @@
+import { Pool } from "pg";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
 import { IPlayerRepository } from "../../../domain/repositories/playerRepository";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
@@ -7,7 +8,8 @@ import { PlayerDTO } from "../../dto/playerDto";
 export class FindAllPlayersUseCase {
   constructor(
     private readonly playerRepository: IPlayerRepository,
-    private readonly conventionRepository: IConventionRepository
+    private readonly conventionRepository: IConventionRepository,
+    private readonly db: Pool
   ) {}
 
   async execute(conventionId: string): Promise<PlayerDTO[]> {
@@ -20,11 +22,8 @@ export class FindAllPlayersUseCase {
     }
 
     // 大会に紐づいたプレイヤーの取得
-    const players = await this.playerRepository.findByConventionId(conventionId);
-    return players.map((player) => ({
-      id: player.id,
-      name: player.name.name,
-      points: player.points.value
-    }));
+    const client = await this.db.connect();
+    const players = await this.playerRepository.findByConventionId(client, conventionId);
+    return players.map((player) => player.getStats());
   }
 }

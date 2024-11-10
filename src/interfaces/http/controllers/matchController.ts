@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { FindAllMatchesUseCase } from "../../../application/use-cases/match/findAllMatchesUseCase";
-import { ResisterMatchUseCase } from "../../../application/use-cases/match/ResisterMatchUseCase";
+import { ResisterMatchUseCase } from "../../../application/use-cases/match/resisterMatchUseCase";
 import { isValidUUID } from "../../../shared/common/ValidUUID";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 

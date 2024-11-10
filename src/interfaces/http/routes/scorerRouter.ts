@@ -13,12 +13,12 @@ import { PostgresPlayerRepository } from "../../../infrastructure/repositories/P
 const matchRepository = new PostgresMatchRepository(pool);
 const conventionRepository = new PostgresConventionRepository(pool);
 const socrerRepository = new PostgresScorerRepository(pool);
-const playerRepository = new PostgresPlayerRepository(pool);
+const playerRepository = new PostgresPlayerRepository();
 
 const findScorerByMatchIdUseCase = new FindScorerByMatchIdUseCase(socrerRepository, matchRepository, conventionRepository);
 const resisterScorerUseCase = new ResisterScorerUseCase(socrerRepository, matchRepository, conventionRepository);
 const findScorerRankingByConventionIdUseCase = new FindScorerRankingByConventionIdUseCase(socrerRepository, conventionRepository);
-const findScorerRankingByPlayerIdUseCase = new FindScorerRankingByPlayerIdUseCase(socrerRepository, playerRepository);
+const findScorerRankingByPlayerIdUseCase = new FindScorerRankingByPlayerIdUseCase(socrerRepository, playerRepository, pool);
 
 const scorerController = new ScorerContoroller(
   findScorerByMatchIdUseCase,

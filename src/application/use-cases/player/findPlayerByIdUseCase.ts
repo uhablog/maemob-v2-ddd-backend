@@ -1,3 +1,4 @@
+import { Pool } from "pg";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
 import { IPlayerRepository } from "../../../domain/repositories/playerRepository";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
@@ -7,7 +8,8 @@ import { PlayerDTO } from "../../dto/playerDto";
 export class FindPlayerByIdUseCase {
   constructor(
     private readonly playerRepository: IPlayerRepository,
-    private readonly conventionRepository: IConventionRepository
+    private readonly conventionRepository: IConventionRepository,
+    private readonly db: Pool
   ) {}
 
   async execute(conventionId: string, id: number): Promise<PlayerDTO> {
@@ -19,16 +21,13 @@ export class FindPlayerByIdUseCase {
       throw new NotFoundError(`convention id: ${conventionId}`);
     }
 
-    const player = await this.playerRepository.findById(id);
+    const client = await this.db.connect();
+    const player = await this.playerRepository.findById(client, id);
 
     if (player == null) {
       throw new NotFoundError(`player id ${id}`);
     }
 
-    return {
-      id: player.id,
-      name: player.name.name,
-      points: player.points.value
-    }
+    return player.getStats();
   };
 };

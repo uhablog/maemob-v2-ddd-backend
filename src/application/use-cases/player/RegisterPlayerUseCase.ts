@@ -1,10 +1,17 @@
+import { Pool } from "pg";
 import { Player } from "../../../domain/entities/player";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
 import { IPlayerRepository } from "../../../domain/repositories/playerRepository";
+import { Concede } from "../../../domain/value-objects/concede";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
+import { Draws } from "../../../domain/value-objects/draws";
+import { Goals } from "../../../domain/value-objects/goals";
+import { Losses } from "../../../domain/value-objects/losses";
 import { PlayerName } from "../../../domain/value-objects/playerName";
 import { Points } from "../../../domain/value-objects/points";
+import { Wins } from "../../../domain/value-objects/wins";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
+import { PlayerDTO } from "../../dto/playerDto";
 
 interface ResisterPlayerDTO {
   name: string
@@ -14,10 +21,12 @@ interface ResisterPlayerDTO {
 export class ResisterPlayerUseCase {
   constructor(
     private readonly playerRepository: IPlayerRepository,
-    private readonly conventionRepository: IConventionRepository
+    private readonly conventionRepository: IConventionRepository,
+    private readonly db: Pool
   ) {}
 
-  async execute(data: ResisterPlayerDTO): Promise<number> {
+  async execute(data: ResisterPlayerDTO): Promise<PlayerDTO> {
+    const client = await this.db.connect();
 
     const conventionId = new ConventionID(data.conventionId);
 
@@ -29,11 +38,19 @@ export class ResisterPlayerUseCase {
     }
 
     const player = new Player(
-      1,
+      null,
       conventionId,
       new PlayerName(data.name),
-      new Points(0)
+      new Points(0),
+      new Wins(0),
+      new Draws(0),
+      new Losses(0),
+      new Goals(0),
+      new Concede(0)
     );
-    return await this.playerRepository.save(player);
+    const id = await this.playerRepository.save(client, player);
+    player.setId(id);
+
+    return player.getStats();
   }
 }

@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { FindAllPlayersUseCase } from "../../../application/use-cases/player/findAllPlayersUseCase";
-import { ResisterPlayerUseCase } from "../../../application/use-cases/player/RegisterPlayerUseCase";
 import { FindPlayerByIdUseCase } from "../../../application/use-cases/player/findPlayerByIdUseCase";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { isValidUUID } from "../../../shared/common/ValidUUID";
+import { ResisterPlayerUseCase } from "../../../application/use-cases/player/registerPlayerUseCase";
 
 export class PlayerController {
   constructor(
@@ -107,12 +107,8 @@ export class PlayerController {
     console.log(`resister player ${name}`);
 
     try {
-      const id = await this.registerPlayerUseCase.execute({name, conventionId});
-      res.status(201).json({
-        id: id,
-        name: name,
-        points: 0
-      });
+      const player = await this.registerPlayerUseCase.execute({name, conventionId});
+      res.status(201).json(player);
     } catch (error) {
       if (error instanceof NotFoundError) {
         res.status(error.statusCode).json({ message: error.message });

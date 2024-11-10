@@ -199,6 +199,12 @@ describe('【正常系】プレイヤーの取得(ID指定)', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(createdPlayerId);
     expect(response.body.name).toBe('Taro');
+    expect(response.body.points).toBe(0);
+    expect(response.body.wins).toBe(0);
+    expect(response.body.draws).toBe(0);
+    expect(response.body.losses).toBe(0);
+    expect(response.body.goals).toBe(0);
+    expect(response.body.concede).toBe(0);
   });
 
 });

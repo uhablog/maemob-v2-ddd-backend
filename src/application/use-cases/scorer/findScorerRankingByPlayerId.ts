@@ -1,3 +1,4 @@
+import { Pool } from "pg";
 import { IPlayerRepository } from "../../../domain/repositories/playerRepository";
 import { IScorerRepository } from "../../../domain/repositories/scorerRepository";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
@@ -6,17 +7,19 @@ export class FindScorerRankingByPlayerIdUseCase {
 
   constructor(
     private readonly scorerRepository: IScorerRepository,
-    private readonly playerRepository: IPlayerRepository
+    private readonly playerRepository: IPlayerRepository,
+    private readonly db: Pool
   ) {}
 
   async execute(
     playerId: number
   ): Promise<ScorerCountDTO[]> {
+    const client = await this.db.connect();
 
     /**
      * プレイヤーの存在確認
      */
-    const player = await this.playerRepository.findById(playerId);
+    const player = await this.playerRepository.findById(client, playerId);
 
     if (player == null) {
       throw new NotFoundError(`player id: ${playerId}`);

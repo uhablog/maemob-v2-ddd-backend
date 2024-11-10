@@ -1,3 +1,4 @@
+import { Pool } from "pg";
 import { IAssistRepository } from "../../../domain/repositories/assistRepository";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
 import { IMatchRepository } from "../../../domain/repositories/matchRepository";
@@ -8,7 +9,8 @@ export class FindAssistByMatchIdUseCase {
   constructor(
     private readonly assistRepository: IAssistRepository,
     private readonly matchRepository: IMatchRepository,
-    private readonly conventionRepository: IConventionRepository
+    private readonly conventionRepository: IConventionRepository,
+    private readonly db: Pool
   ) {}
 
   async execute(conventionId: string, matchId: number): Promise<AssistDTO[]> {
@@ -19,15 +21,24 @@ export class FindAssistByMatchIdUseCase {
       throw new NotFoundError(`convention id: ${conventionId}`);
     }
 
-    // 試合の存在確認
-    const match = await this.matchRepository.findById(matchId);
+    const client = await this.db.connect();
 
-    if (match == null) {
-      throw new NotFoundError(`match id: ${matchId}`);
-    };
+    try {
+      
+      // 試合の存在確認
+      const match = await this.matchRepository.findById(client, matchId);
 
-    const results = await this.assistRepository.findByMatchId(matchId);
+      if (match == null) {
+        throw new NotFoundError(`match id: ${matchId}`);
+      };
 
-    return results.map((result) => result.toJSON() as AssistDTO);
+      const results = await this.assistRepository.findByMatchId(matchId);
+
+      return results.map((result) => result.toJSON() as AssistDTO);
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
   };
 }

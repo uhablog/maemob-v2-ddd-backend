@@ -1,4 +1,4 @@
-import { Pool } from "pg";
+import { Pool, PoolClient } from "pg";
 import { IMatchRepository } from "../../domain/repositories/matchRepository";
 import { Match } from "../../domain/entities/match";
 import { Score } from "../../domain/value-objects/score";
@@ -10,9 +10,9 @@ import { ConventionID } from "../../domain/value-objects/conventionId";
 export class PostgresMatchRepository implements IMatchRepository {
   constructor(private readonly db: Pool){}
   
-  async save(match: Match): Promise<number> {
+  async save(client: PoolClient, match: Match): Promise<number> {
     try {
-      const result = await this.db.query(`
+      const result = await client.query(`
         INSERT INTO matches(
           convention_id,
           home_player_id,
@@ -44,8 +44,8 @@ export class PostgresMatchRepository implements IMatchRepository {
     }
   }
 
-  async findAll(conventionId: string): Promise<Match[]> {
-    const results = await this.db.query(`
+  async findAll(client: PoolClient, conventionId: string): Promise<Match[]> {
+    const results = await client.query(`
       SELECT
         id
         ,convention_id
@@ -71,8 +71,8 @@ export class PostgresMatchRepository implements IMatchRepository {
     ));
   }
 
-  async findById(id: number): Promise<Match | null> {
-    const result = await this.db.query(`
+  async findById(client: PoolClient, id: number): Promise<Match | null> {
+    const result = await client.query(`
       SELECT
         id
         ,convention_id

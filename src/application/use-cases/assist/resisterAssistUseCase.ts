@@ -1,3 +1,4 @@
+import { Pool } from "pg";
 import { Assist } from "../../../domain/entities/assist";
 import { IAssistRepository } from "../../../domain/repositories/assistRepository";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
@@ -13,7 +14,8 @@ export class ResisterAssistUseCase {
   constructor(
     private readonly assistRepository: IAssistRepository,
     private readonly matchRepository: IMatchRepository,
-    private readonly conventionRepository: IConventionRepository
+    private readonly conventionRepository: IConventionRepository,
+    private readonly db: Pool
   ) {};
 
   async execute(data: ResisterAssistDTO): Promise<string> {
@@ -25,42 +27,50 @@ export class ResisterAssistUseCase {
       throw new NotFoundError(`convention id: ${data.convention_id}`);
     }
 
-    // playerがmatchしているか判定
-    const match = await this.matchRepository.findById(data.match_id);
+    const client = await this.db.connect();
 
-    if (match == null) {
-      throw new NotFoundError(`match id: ${data.match_id}`);
+    try {
+      // playerがmatchしているか判定
+      const match = await this.matchRepository.findById(client, data.match_id);
+
+      if (match == null) {
+        throw new NotFoundError(`match id: ${data.match_id}`);
+      }
+
+      // アシストのプレイヤーIDは試合のホームかアウェイのプレイヤーでなければおかしい
+      if (match.homePlayerId !== data.player_id && match.awayPlayerId !== data.player_id) {
+        throw new BadRequestError('試合を行ったユーザーを指定して下さい。');
+      }
+      
+      // アシスト数は試合の得点数を超えない
+      const results = await this.assistRepository.findByMatchId(data.match_id);
+
+      /**
+       * アシストがホームチームの場合、ホームチームの得点数をアシスト数が超えない
+       * アシストがアウェイチームの場合、アウェイチームの得点数をアシスト数が超えない
+       */
+      if (data.player_id === match.homePlayerId && results.filter(result => result.playerId === match.homePlayerId).length === match.homeScore.value) {
+        throw new BadRequestError(`ホームチームのアシスト数が得点数に到達しました。`);
+      } else if (data.player_id === match.awayPlayerId && results.filter(result => result.playerId === match.awayPlayerId).length === match.awayScore.value) {
+        throw new BadRequestError(`アウェイチームのアシスト数が得点数に到達しました。`);
+      };
+
+      // アシストの登録を行う
+      const assistId = new AssistId();
+
+      const assist = new Assist(
+        assistId,
+        new AssistName(data.name),
+        data.match_id,
+        data.player_id
+      );
+
+      await this.assistRepository.save(assist);
+      return assistId.toString();
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
     }
-
-    // アシストのプレイヤーIDは試合のホームかアウェイのプレイヤーでなければおかしい
-    if (match.homePlayerId !== data.player_id && match.awayPlayerId !== data.player_id) {
-      throw new BadRequestError('試合を行ったユーザーを指定して下さい。');
-    }
-    
-    // アシスト数は試合の得点数を超えない
-    const results = await this.assistRepository.findByMatchId(data.match_id);
-
-    /**
-     * アシストがホームチームの場合、ホームチームの得点数をアシスト数が超えない
-     * アシストがアウェイチームの場合、アウェイチームの得点数をアシスト数が超えない
-     */
-    if (data.player_id === match.homePlayerId && results.filter(result => result.playerId === match.homePlayerId).length === match.homeScore.value) {
-      throw new BadRequestError(`ホームチームのアシスト数が得点数に到達しました。`);
-    } else if (data.player_id === match.awayPlayerId && results.filter(result => result.playerId === match.awayPlayerId).length === match.awayScore.value) {
-      throw new BadRequestError(`アウェイチームのアシスト数が得点数に到達しました。`);
-    };
-
-    // アシストの登録を行う
-    const assistId = new AssistId();
-
-    const assist = new Assist(
-      assistId,
-      new AssistName(data.name),
-      data.match_id,
-      data.player_id
-    );
-
-    await this.assistRepository.save(assist);
-    return assistId.toString();
   };
 };

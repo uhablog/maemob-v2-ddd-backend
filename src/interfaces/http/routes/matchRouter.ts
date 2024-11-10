@@ -11,7 +11,7 @@ const matchRepository = new PostgresMatchRepository(pool);
 const playerRepository = new PostgresPlayerRepository();
 const conventionRepository = new PostgresConventionRepository(pool);
 
-const findAllMatchesUseCase = new FindAllMatchesUseCase(matchRepository, conventionRepository);
+const findAllMatchesUseCase = new FindAllMatchesUseCase(matchRepository, conventionRepository, pool);
 const resisterMatchUseCase = new ResisterMatchUseCase(matchRepository, playerRepository, conventionRepository, pool)
 
 const matchController = new MatchController(findAllMatchesUseCase, resisterMatchUseCase);

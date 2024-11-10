@@ -1,3 +1,4 @@
+import { Pool } from "pg";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
 import { IMatchRepository } from "../../../domain/repositories/matchRepository";
 import { IScorerRepository } from "../../../domain/repositories/scorerRepository";
@@ -8,7 +9,8 @@ export class FindScorerByMatchIdUseCase {
   constructor(
     private readonly scorerRepository: IScorerRepository,
     private readonly matchRepository: IMatchRepository,
-    private readonly conventionRepository: IConventionRepository
+    private readonly conventionRepository: IConventionRepository,
+    private readonly db: Pool
   ) {}
 
   async execute(conventionId: string, matchId: number): Promise<ScorerDTO[]> {
@@ -19,15 +21,24 @@ export class FindScorerByMatchIdUseCase {
       throw new NotFoundError(`convention id: ${conventionId}`);
     }
 
-    // 試合の存在確認
-    const match = await this.matchRepository.findById(matchId);
+    const client = await this.db.connect();
 
-    if (match == null) {
-      throw new NotFoundError(`match id: ${matchId}`);
-    };
+    try {
+      // 試合の存在確認
+      const match = await this.matchRepository.findById(client, matchId);
 
-    const results = await this.scorerRepository.findByMatchId(matchId);
+      if (match == null) {
+        throw new NotFoundError(`match id: ${matchId}`);
+      };
 
-    return results.map((result) => result.toJSON() as ScorerDTO);
+      const results = await this.scorerRepository.findByMatchId(matchId);
+
+      return results.map((result) => result.toJSON() as ScorerDTO);
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
+
   };
 }

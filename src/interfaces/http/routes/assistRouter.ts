@@ -11,8 +11,8 @@ const matchRepository = new PostgresMatchRepository(pool);
 const conventionRepository = new PostgresConventionRepository(pool);
 const socrerRepository = new PostgresAssistRepository(pool);
 
-const findAssistByMatchIdUseCase = new FindAssistByMatchIdUseCase(socrerRepository, matchRepository, conventionRepository);
-const resisterAssistUseCase = new ResisterAssistUseCase(socrerRepository, matchRepository, conventionRepository);
+const findAssistByMatchIdUseCase = new FindAssistByMatchIdUseCase(socrerRepository, matchRepository, conventionRepository, pool);
+const resisterAssistUseCase = new ResisterAssistUseCase(socrerRepository, matchRepository, conventionRepository, pool);
 
 const scorerController = new AssistContoroller(findAssistByMatchIdUseCase, resisterAssistUseCase);
 

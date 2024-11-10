@@ -15,8 +15,8 @@ const conventionRepository = new PostgresConventionRepository(pool);
 const socrerRepository = new PostgresScorerRepository(pool);
 const playerRepository = new PostgresPlayerRepository();
 
-const findScorerByMatchIdUseCase = new FindScorerByMatchIdUseCase(socrerRepository, matchRepository, conventionRepository);
-const resisterScorerUseCase = new ResisterScorerUseCase(socrerRepository, matchRepository, conventionRepository);
+const findScorerByMatchIdUseCase = new FindScorerByMatchIdUseCase(socrerRepository, matchRepository, conventionRepository, pool);
+const resisterScorerUseCase = new ResisterScorerUseCase(socrerRepository, matchRepository, conventionRepository, pool);
 const findScorerRankingByConventionIdUseCase = new FindScorerRankingByConventionIdUseCase(socrerRepository, conventionRepository);
 const findScorerRankingByPlayerIdUseCase = new FindScorerRankingByPlayerIdUseCase(socrerRepository, playerRepository, pool);
 

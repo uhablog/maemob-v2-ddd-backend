@@ -540,7 +540,12 @@
         "properties": {
           "id": { "type": "integer", "example": 1 },
           "name": { "type": "string", "example": "Taro" },
-          "points": { "type": "integer", "example": 3 }
+          "points": { "type": "integer", "example": 3 },
+          "wins": { "type": "integer", "example": 1},
+          "draws": { "type": "integer", "example": 1},
+          "losses": { "type": "integer", "example": 1},
+          "goals": { "type": "integer", "example": 1},
+          "concede": {"type": "integer", "example": 1}
         }
       },
       "NewPlayer": {

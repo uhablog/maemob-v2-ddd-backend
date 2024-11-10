@@ -17,6 +17,11 @@ CREATE TABLE players (
   convention_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   points INT DEFAULT 0,
+  wins INT DEFAULT 0,
+  draws INT DEFAULT 0,
+  losses INT DEFAULT 0,
+  goals INT DEFAULT 0,
+  concede INT DEFAULT 0,
   CONSTRAINT fk_player_conventions FOREIGN KEY (convention_id)
     REFERENCES conventions(id)
 );
@@ -74,6 +79,11 @@ CREATE TABLE players (
   convention_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   points INT DEFAULT 0,
+  wins INT DEFAULT 0,
+  draws INT DEFAULT 0,
+  losses INT DEFAULT 0,
+  goals INT DEFAULT 0,
+  concede INT DEFAULT 0,
   CONSTRAINT fk_player_conventions FOREIGN KEY (convention_id)
     REFERENCES conventions(id)
 );

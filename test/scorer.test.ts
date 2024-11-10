@@ -2,11 +2,7 @@ import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
 
 import app from '../src/index';
-import { closeDatabase, resetDatabase } from './setupDatabase';
-
-// beforeAll(async () => {
-//   await resetDatabase();
-// });
+import { closeDatabase } from './setupDatabase';
 
 afterAll(async () => {
   await closeDatabase();

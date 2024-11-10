@@ -4,14 +4,6 @@ import { closeDatabase, resetDatabase } from './setupDatabase';
 
 import { v4 as uuidv4 } from 'uuid';
 
-// beforeAll(async () => {
-//   await resetDatabase(); // テスト開始前にデータベースを初期化
-// });
-
-// afterEach(async () => {
-//   await resetDatabase();
-// });
-
 afterAll(async () => {
   await closeDatabase(); // テスト終了後に接続を終了
 });
@@ -34,6 +26,12 @@ describe('【正常系】プレイヤーの作成', () => {
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('id');
     expect(response.body.name).toBe('Taro');
+    expect(response.body.points).toBe(0);
+    expect(response.body.wins).toBe(0);
+    expect(response.body.draws).toBe(0);
+    expect(response.body.losses).toBe(0);
+    expect(response.body.goals).toBe(0);
+    expect(response.body.concede).toBe(0);
   });
 
 });
@@ -102,9 +100,9 @@ describe('【正常系】プレイヤーの取得', () => {
 
     /**
      * 試合結果を登録して勝ち点順に取得できるかチェックする
-     * 太郎：勝ち点6
-     * 花子：勝ち点3
-     * 三郎：勝ち点0
+     * 太郎：勝点7 得点5 失点3
+     * 花子：勝点4 得点5 失点4
+     * 三郎：勝点0 得点2 失点5
      */
     await request(app)
       .post(`/api/conventions/${createdConventionId}/matches`)
@@ -113,6 +111,14 @@ describe('【正常系】プレイヤーの取得', () => {
         awayPlayerId: responsePostHanako.body.id,
         homeScore: 1,
         awayScore: 0
+      });
+    await request(app)
+      .post(`/api/conventions/${createdConventionId}/matches`)
+      .send({
+        homePlayerId: responsePostTaro.body.id,
+        awayPlayerId: responsePostHanako.body.id,
+        homeScore: 2,
+        awayScore: 2
       });
     await request(app)
       .post(`/api/conventions/${createdConventionId}/matches`)
@@ -137,9 +143,28 @@ describe('【正常系】プレイヤーの取得', () => {
     expect(response.status).toBe(200);
     expect(response.body.results.length).toBe(3);  // プレイヤーが存在することを確認
     expect(response.body.results[0].name).toBe('Taro');
-    expect(response.body.results[0].points).toBe(6);
+    expect(response.body.results[0].points).toBe(7);
+    expect(response.body.results[0].wins).toBe(2);
+    expect(response.body.results[0].draws).toBe(1);
+    expect(response.body.results[0].losses).toBe(0);
+    expect(response.body.results[0].goals).toBe(5);
+    expect(response.body.results[0].concede).toBe(3);
+
     expect(response.body.results[1].name).toBe('Hanako');
+    expect(response.body.results[1].points).toBe(4);
+    expect(response.body.results[1].wins).toBe(1);
+    expect(response.body.results[1].draws).toBe(1);
+    expect(response.body.results[1].losses).toBe(1);
+    expect(response.body.results[1].goals).toBe(5);
+    expect(response.body.results[1].concede).toBe(4);
+
     expect(response.body.results[2].name).toBe('Saburo');
+    expect(response.body.results[2].points).toBe(0);
+    expect(response.body.results[2].wins).toBe(0);
+    expect(response.body.results[2].draws).toBe(0);
+    expect(response.body.results[2].losses).toBe(2);
+    expect(response.body.results[2].goals).toBe(2);
+    expect(response.body.results[2].concede).toBe(5);
   });
 
 });
@@ -166,6 +191,12 @@ describe('【正常系】プレイヤーの取得(ID指定)', () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(createdPlayerId);
     expect(response.body.name).toBe('Taro');
+    expect(response.body.points).toBe(0);
+    expect(response.body.wins).toBe(0);
+    expect(response.body.draws).toBe(0);
+    expect(response.body.losses).toBe(0);
+    expect(response.body.goals).toBe(0);
+    expect(response.body.concede).toBe(0);
   });
 
 });

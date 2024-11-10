@@ -1,13 +1,16 @@
+import { Pool } from "pg";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
 import { IPlayerRepository } from "../../../domain/repositories/playerRepository";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { PlayerDTO } from "../../dto/playerDto";
+import { FindConventionByIdUseCase } from "../convention/findConventionByIdUseCase";
 
 export class FindPlayerByIdUseCase {
   constructor(
     private readonly playerRepository: IPlayerRepository,
-    private readonly conventionRepository: IConventionRepository
+    private readonly conventionRepository: IConventionRepository,
+    private readonly db: Pool
   ) {}
 
   async execute(conventionId: string, id: number): Promise<PlayerDTO> {
@@ -19,16 +22,21 @@ export class FindPlayerByIdUseCase {
       throw new NotFoundError(`convention id: ${conventionId}`);
     }
 
-    const player = await this.playerRepository.findById(id);
+    const client = await this.db.connect();
 
-    if (player == null) {
-      throw new NotFoundError(`player id ${id}`);
-    }
+    try {
+      
+      const player = await this.playerRepository.findById(client, id);
 
-    return {
-      id: player.id,
-      name: player.name.name,
-      points: player.points.value
+      if (player == null) {
+        throw new NotFoundError(`player id ${id}`);
+      }
+
+      return player.getStats();
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
     }
   };
 };

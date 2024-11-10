@@ -16,18 +16,24 @@ export class FindScorerRankingByPlayerIdUseCase {
   ): Promise<ScorerCountDTO[]> {
     const client = await this.db.connect();
 
-    /**
-     * プレイヤーの存在確認
-     */
-    const player = await this.playerRepository.findById(client, playerId);
+    try {
+      /**
+       * プレイヤーの存在確認
+       */
+      const player = await this.playerRepository.findById(client, playerId);
 
-    if (player == null) {
-      throw new NotFoundError(`player id: ${playerId}`);
+      if (player == null) {
+        throw new NotFoundError(`player id: ${playerId}`);
+      }
+
+      // 得点ランキングの取得
+      const results = await this.scorerRepository.findScorerRankingByPlayerId(playerId);
+
+      return results.map( (result) => result.toJSON() as ScorerCountDTO);
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
     }
-
-    // 得点ランキングの取得
-    const results = await this.scorerRepository.findScorerRankingByPlayerId(playerId);
-
-    return results.map( (result) => result.toJSON() as ScorerCountDTO);
   };
 };

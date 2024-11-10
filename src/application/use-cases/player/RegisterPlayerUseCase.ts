@@ -28,29 +28,37 @@ export class ResisterPlayerUseCase {
   async execute(data: ResisterPlayerDTO): Promise<PlayerDTO> {
     const client = await this.db.connect();
 
-    const conventionId = new ConventionID(data.conventionId);
+    try {
+      
+      const conventionId = new ConventionID(data.conventionId);
 
-    // 大会の存在確認(存在しなければ404 NOT FOUND)
-    const convention = await this.conventionRepository.findById(conventionId);
+      // 大会の存在確認(存在しなければ404 NOT FOUND)
+      const convention = await this.conventionRepository.findById(conventionId);
 
-    if (convention == null) {
-      throw new NotFoundError(`convention id: ${conventionId.toString()}`);
+      if (convention == null) {
+        throw new NotFoundError(`convention id: ${conventionId.toString()}`);
+      }
+
+      const player = new Player(
+        null,
+        conventionId,
+        new PlayerName(data.name),
+        new Points(0),
+        new Wins(0),
+        new Draws(0),
+        new Losses(0),
+        new Goals(0),
+        new Concede(0)
+      );
+      const id = await this.playerRepository.save(client, player);
+      player.setId(id);
+
+      return player.getStats();
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
     }
 
-    const player = new Player(
-      null,
-      conventionId,
-      new PlayerName(data.name),
-      new Points(0),
-      new Wins(0),
-      new Draws(0),
-      new Losses(0),
-      new Goals(0),
-      new Concede(0)
-    );
-    const id = await this.playerRepository.save(client, player);
-    player.setId(id);
-
-    return player.getStats();
   }
 }

@@ -23,7 +23,13 @@ export class FindAllPlayersUseCase {
 
     // 大会に紐づいたプレイヤーの取得
     const client = await this.db.connect();
-    const players = await this.playerRepository.findByConventionId(client, conventionId);
-    return players.map((player) => player.getStats());
+    try {
+      const players = await this.playerRepository.findByConventionId(client, conventionId);
+      return players.map((player) => player.getStats());
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 }

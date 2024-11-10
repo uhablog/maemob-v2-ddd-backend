@@ -4,6 +4,7 @@ import { IPlayerRepository } from "../../../domain/repositories/playerRepository
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { PlayerDTO } from "../../dto/playerDto";
+import { FindConventionByIdUseCase } from "../convention/findConventionByIdUseCase";
 
 export class FindPlayerByIdUseCase {
   constructor(
@@ -22,12 +23,20 @@ export class FindPlayerByIdUseCase {
     }
 
     const client = await this.db.connect();
-    const player = await this.playerRepository.findById(client, id);
 
-    if (player == null) {
-      throw new NotFoundError(`player id ${id}`);
+    try {
+      
+      const player = await this.playerRepository.findById(client, id);
+
+      if (player == null) {
+        throw new NotFoundError(`player id ${id}`);
+      }
+
+      return player.getStats();
+    } catch (error) {
+      throw error;
+    } finally {
+      client.release();
     }
-
-    return player.getStats();
   };
 };

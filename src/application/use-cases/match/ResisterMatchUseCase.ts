@@ -93,7 +93,7 @@ export class ResisterMatchUseCase {
       await client.query("ROLLBACK");
       throw error;
     } finally {
-      await client.release();
+      client.release();
     }
   }
 }

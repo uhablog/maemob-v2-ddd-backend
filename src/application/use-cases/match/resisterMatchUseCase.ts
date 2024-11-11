@@ -8,6 +8,7 @@ import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
 
+
 export class ResisterMatchUseCase {
   constructor(
     private readonly matchRepository: IMatchRepository,

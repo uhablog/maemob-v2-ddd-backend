@@ -3,6 +3,10 @@ import { Assist } from "../../domain/entities/assist";
 import { IAssistRepository } from "../../domain/repositories/assistRepository";
 import { AssistId } from "../../domain/value-objects/assistId";
 import { AssistName } from "../../domain/value-objects/assistName";
+import { AssistCount } from "../../domain/entities/assistCount";
+import { ConventionID } from "../../domain/value-objects/conventionId";
+import { PlayerName } from "../../domain/value-objects/playerName";
+import { AssistCounts } from "../../domain/value-objects/assistCounts";
 
 export class PostgresAssistRepository implements IAssistRepository {
 
@@ -51,4 +55,66 @@ export class PostgresAssistRepository implements IAssistRepository {
       row.player_id
     ));
   };
+
+  async findAssistRankingByConventionId(conventionId: ConventionID): Promise<AssistCount[]> {
+    const results = await this.db.query(`
+      SELECT 
+        a.name AS assist_name,
+        p.id AS player_id,
+        p.name AS player_name,
+        COUNT(a.id) AS assists
+      FROM 
+        conventions c
+      JOIN 
+        matches m ON c.id = m.convention_id
+      JOIN 
+        assists a ON m.id = a.match_id
+      JOIN 
+        players p ON a.player_id = p.id
+      WHERE 
+        c.id = $1
+      GROUP BY 
+        a.name, p.name, p.id
+      ORDER BY 
+        assists DESC;
+    `, [ conventionId.toString() ]);
+
+    return results.rows.map( row => new AssistCount(
+      row.player_id,
+      new PlayerName(row.player_name),
+      new AssistName(row.assist_name),
+      new AssistCounts(Number(row.assists))
+    ));
+  }
+
+  async findAssistRankingByPlayerId(playerId: number): Promise<AssistCount[]> {
+    const results = await this.db.query(`
+      SELECT 
+        a.name AS assist_name,
+        p.id AS player_id,
+        p.name AS player_name,
+        COUNT(a.id) AS assists
+      FROM 
+        conventions c
+      JOIN 
+        matches m ON c.id = m.convention_id
+      JOIN 
+        assists a ON m.id = a.match_id
+      JOIN 
+        players p ON a.player_id = p.id
+      WHERE 
+        p.id = $1
+      GROUP BY 
+        a.name, p.name, p.id
+      ORDER BY 
+        assists DESC;
+    `, [ playerId ]);
+
+    return results.rows.map( row => new AssistCount(
+      row.player_id,
+      new PlayerName(row.player_name),
+      new AssistName(row.assist_name),
+      new AssistCounts(Number(row.assists))
+    ));
+  }
 };

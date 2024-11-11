@@ -13,6 +13,7 @@ import { Wins } from "../../../domain/value-objects/wins";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { PlayerDTO } from "../../dto/playerDto";
 
+
 interface ResisterPlayerDTO {
   name: string
   conventionId: string

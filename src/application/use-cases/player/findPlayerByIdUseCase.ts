@@ -4,7 +4,6 @@ import { IPlayerRepository } from "../../../domain/repositories/playerRepository
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { PlayerDTO } from "../../dto/playerDto";
-import { FindConventionByIdUseCase } from "../convention/findConventionByIdUseCase";
 
 export class FindPlayerByIdUseCase {
   constructor(

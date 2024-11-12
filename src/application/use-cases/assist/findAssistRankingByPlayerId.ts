@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { IPlayerRepository } from "../../../domain/repositories/playerRepository";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { IAssistRepository } from "../../../domain/repositories/assistRepository";
+import { AssistCountDTO } from "../../dto/assistCountDto";
 
 export class FindAssistRankingByPlayerIdUseCase {
 

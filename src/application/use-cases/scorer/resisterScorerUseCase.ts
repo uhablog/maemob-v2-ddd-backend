@@ -8,6 +8,7 @@ import { ScorerId } from "../../../domain/value-objects/scorerId";
 import { ScorerName } from "../../../domain/value-objects/scorerName";
 import { BadRequestError } from "../../../shared/errors/BadRequest";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
+import { ResisterScorerDTO } from "../../dto/resisterScorerDto";
 
 export class ResisterScorerUseCase {
 

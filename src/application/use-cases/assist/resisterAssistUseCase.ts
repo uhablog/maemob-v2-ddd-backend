@@ -8,6 +8,7 @@ import { AssistName } from "../../../domain/value-objects/assistName";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { BadRequestError } from "../../../shared/errors/BadRequest";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
+import { ResisterAssistDTO } from "../../dto/resisterAssistDto";
 
 export class ResisterAssistUseCase {
 

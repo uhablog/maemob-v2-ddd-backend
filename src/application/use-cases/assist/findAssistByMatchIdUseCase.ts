@@ -4,6 +4,7 @@ import { IConventionRepository } from "../../../domain/repositories/conventionRe
 import { IMatchRepository } from "../../../domain/repositories/matchRepository";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
+import { AssistDTO } from "../../dto/assistDto";
 
 export class FindAssistByMatchIdUseCase {
   constructor(

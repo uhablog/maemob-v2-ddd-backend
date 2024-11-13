@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { IPlayerRepository } from "../../../domain/repositories/playerRepository";
 import { IScorerRepository } from "../../../domain/repositories/scorerRepository";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
+import { ScorerCountDTO } from "../../dto/scorerCountDto";
 
 export class FindScorerRankingByPlayerIdUseCase {
 

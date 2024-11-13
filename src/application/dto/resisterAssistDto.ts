@@ -1,4 +1,4 @@
-interface ResisterAssistDTO {
+export interface ResisterAssistDTO {
   name: string
   player_id: number
   match_id: number

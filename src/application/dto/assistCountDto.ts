@@ -1,4 +1,4 @@
-interface AssistCountDTO {
+export interface AssistCountDTO {
   player_id: number,
   player_name: string,
   name: string,

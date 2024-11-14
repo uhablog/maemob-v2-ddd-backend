@@ -16,7 +16,7 @@ afterAll(async () => {
 const ERROR_MESSAGES = {
   missingConventionOrPlayerId: "convention_idもしくはplayer_idどちらか1つを指定して下さい。",
   invalidConventionIdFormat: "convention_idはUUID形式で指定して下さい。",
-  invalidPlayerIdFormat: "player_idは1はUUID形式で指定して下さい。"
+  invalidPlayerIdFormat: "player_idはUUID形式で指定して下さい。"
 }
 
 /**

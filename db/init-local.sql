@@ -13,7 +13,7 @@ CREATE TABLE conventions (
 );
 
 CREATE TABLE players (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   convention_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   points INT DEFAULT 0,
@@ -29,8 +29,8 @@ CREATE TABLE players (
 CREATE TABLE matches (
   id SERIAL PRIMARY KEY,
   convention_id UUID NOT NULL,
-  home_player_id INT NOT NULL,
-  away_player_id INT NOT NULL,
+  home_player_id UUID NOT NULL,
+  away_player_id UUID NOT NULL,
   home_score INT NOT NULL,
   away_score INT NOT NULL,
   match_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -41,7 +41,7 @@ CREATE TABLE matches (
 CREATE TABLE scorers (
   id UUID PRIMARY KEY,
   match_id INT NOT NULL,
-  player_id INT NOT NULL,
+  player_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   CONSTRAINT fk_scorer_players FOREIGN KEY (player_id)
     REFERENCES players(id),
@@ -52,7 +52,7 @@ CREATE TABLE scorers (
 CREATE TABLE assists (
   id UUID PRIMARY KEY,
   match_id INT NOT NULL,
-  player_id INT NOT NULL,
+  player_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   CONSTRAINT fk_assists_players FOREIGN KEY (player_id)
     REFERENCES players(id),
@@ -75,7 +75,7 @@ CREATE TABLE conventions (
 );
 
 CREATE TABLE players (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   convention_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   points INT DEFAULT 0,
@@ -91,8 +91,8 @@ CREATE TABLE players (
 CREATE TABLE matches (
   id SERIAL PRIMARY KEY,
   convention_id UUID NOT NULL,
-  home_player_id INT NOT NULL,
-  away_player_id INT NOT NULL,
+  home_player_id UUID NOT NULL,
+  away_player_id UUID NOT NULL,
   home_score INT NOT NULL,
   away_score INT NOT NULL,
   match_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -103,7 +103,7 @@ CREATE TABLE matches (
 CREATE TABLE scorers (
   id UUID PRIMARY KEY,
   match_id INT NOT NULL,
-  player_id INT NOT NULL,
+  player_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   CONSTRAINT fk_scorer_players FOREIGN KEY (player_id)
     REFERENCES players(id),
@@ -114,7 +114,7 @@ CREATE TABLE scorers (
 CREATE TABLE assists (
   id UUID PRIMARY KEY,
   match_id INT NOT NULL,
-  player_id INT NOT NULL,
+  player_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   CONSTRAINT fk_assists_players FOREIGN KEY (player_id)
     REFERENCES players(id),

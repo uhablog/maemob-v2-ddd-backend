@@ -161,7 +161,8 @@
             "name": "id",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -177,7 +178,7 @@
             }
           },
           "400": {
-            "description": "IDの指定が数字ではない"
+            "description": "IDの指定がUUID形式ではない"
           },
           "404": {
             "description": "該当するIDのユーザーが存在しない"
@@ -485,8 +486,8 @@
             "name": "player_id",
             "required": false,
             "schema": {
-              "type": "number",
-              "minimum": 1
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -535,8 +536,8 @@
             "name": "player_id",
             "required": false,
             "schema": {
-              "type": "number",
-              "minimum": 1
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -588,7 +589,7 @@
       "Player": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "example": 1 },
+          "id": { "type": "string", "format": "uuid" },
           "name": { "type": "string", "example": "Taro" },
           "points": { "type": "integer", "example": 3 },
           "wins": { "type": "integer", "example": 1},
@@ -611,8 +612,8 @@
         "type": "object",
         "properties": {
           "id": { "type": "integer", "example": 1 },
-          "homePlayerId": { "type": "integer", "example": 1 },
-          "awayPlayerId": { "type": "integer", "example": 2 },
+          "homePlayerId": { "type": "string", "format": "uuid" },
+          "awayPlayerId": { "type": "string", "format": "uuid" },
           "homeScore": { "type": "integer", "example": 2 },
           "awayScore": { "type": "integer", "example": 1 },
           "match_date": { "type": "string", "format": "date-time" }
@@ -621,8 +622,8 @@
       "NewMatch": {
         "type": "object",
         "properties": {
-          "homePlayerId": { "type": "integer", "example": 1 },
-          "awayPlayerId": { "type": "integer", "example": 2 },
+          "homePlayerId": { "type": "string", "format": "uuid" },
+          "awayPlayerId": { "type": "string", "format": "uuid" },
           "homeScore": { "type": "integer", "example": 2, "minimum": 0 },
           "awayScore": { "type": "integer", "example": 1, "minimum": 0 }
         },
@@ -638,14 +639,14 @@
         "properties": {
           "id": { "type": "string", "format": "uuid" },
           "match_id": { "type": "string", "format": "uuid" },
-          "player_id": { "type": "integer", "example": 1},
+          "player_id": { "type": "string", "format": "uuid" },
           "name": { "type": "string", "example": "Leo Messi"}
         }
       },
       "NewScorer": {
         "type": "object",
         "properties": {
-          "player_id": { "type": "integer", "example": 1},
+          "player_id": { "type": "string", "format": "uuid" },
           "name": { "type": "string", "example": "Leo Messi"}
         },
         "required": [
@@ -657,7 +658,7 @@
         "type": "object",
         "properties": {
           "id": { "type": "string", "format": "uuid" },
-          "player_id": { "type": "integer", "example": 1},
+          "player_id": { "type": "string", "format": "uuid" },
           "match_id": { "type": "string", "format": "uuid" },
           "name": { "type": "string", "example": "Iniesta"}
         }
@@ -665,7 +666,7 @@
       "NewAssist": {
         "type": "object",
         "properties": {
-          "player_id": { "type": "integer", "example": 1},
+          "player_id": { "type": "string", "format": "uuid" },
           "name": { "type": "string", "example": "Iniesta"}
         },
         "required": [
@@ -677,7 +678,7 @@
         "type": "object",
         "properties": {
           "id": { "type": "string", "format": "uuid" },
-          "player_id": { "type": "integer", "example": 1 },
+          "player_id": { "type": "string", "format": "uuid" },
           "player_name": { "type": "string", "example": "player1"},
           "name": { "type": "integer", "example": "Leo Messi" },
           "scorer_count": { "type": "number", "minimum": 1, "example": 10 }
@@ -687,7 +688,7 @@
         "type": "object",
         "properties": {
           "id": { "type": "string", "format": "uuid" },
-          "player_id": { "type": "integer", "example": 1 },
+          "player_id": { "type": "string", "format": "uuid" },
           "player_name": { "type": "string", "example": "player1"},
           "name": { "type": "integer", "example": "Iniesta" },
           "assist_count": { "type": "number", "minimum": 1, "example": 10 }

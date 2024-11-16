@@ -4,6 +4,7 @@ import { IMatchRepository } from "../../../domain/repositories/matchRepository";
 import { IScorerRepository } from "../../../domain/repositories/scorerRepository";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
+import { ScorerDTO } from "../../dto/scorerDto";
 
 export class FindScorerByMatchIdUseCase {
   constructor(

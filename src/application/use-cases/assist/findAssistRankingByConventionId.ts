@@ -2,6 +2,7 @@ import { IAssistRepository } from "../../../domain/repositories/assistRepository
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
+import { AssistCountDTO } from "../../dto/assistCountDto";
 
 export class FindAssistRankingByConventionIdUseCase {
 

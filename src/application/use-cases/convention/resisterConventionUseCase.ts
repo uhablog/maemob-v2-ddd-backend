@@ -3,6 +3,7 @@ import { IConventionRepository } from "../../../domain/repositories/conventionRe
 import { ConventionHeldDate } from "../../../domain/value-objects/conventionHeldDate";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { ConventionName } from "../../../domain/value-objects/conventionName";
+import { ResisterConventionDTO } from "../../dto/resisterConventionDto";
 import { getToday } from "../../../shared/common/getDate";
 
 export class ResisterConventionUseCase {

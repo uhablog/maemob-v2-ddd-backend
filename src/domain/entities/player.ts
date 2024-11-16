@@ -3,6 +3,7 @@ import { ConventionID } from "../value-objects/conventionId";
 import { Draws } from "../value-objects/draws";
 import { Goals } from "../value-objects/goals";
 import { Losses } from "../value-objects/losses";
+import { PlayerId } from "../value-objects/playerId";
 import { PlayerName } from "../value-objects/playerName";
 import { Points } from "../value-objects/points";
 import { Wins } from "../value-objects/wins";
@@ -10,7 +11,7 @@ import { Wins } from "../value-objects/wins";
 export class Player {
 
   constructor(
-    private _id: number | null, // DB登録前は空でも良い
+    private _id: PlayerId,
     public readonly convention_id: ConventionID,
     public readonly name: PlayerName,
     private _points: Points = new Points(0),
@@ -21,12 +22,12 @@ export class Player {
     private _concede: Concede = new Concede(0),
   ) {}
 
-  get id(): number | null {
+  get id(): PlayerId {
     return this._id;
   }
-  setId(id: number): void {
-    this._id = id;
-  }
+  // setId(id: PlayerId): void {
+  //   this._id = id;
+  // }
 
   get points(): Points {
     return this._points;
@@ -56,7 +57,7 @@ export class Player {
 
   getStats() {
     return {
-      id: this._id,
+      id: this._id.toString(),
       convention_id: this.convention_id.toString(),
       name: this.name.name,
       points: this._points.value,

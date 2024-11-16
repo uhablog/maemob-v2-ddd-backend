@@ -12,6 +12,7 @@ import { Points } from "../../../domain/value-objects/points";
 import { Wins } from "../../../domain/value-objects/wins";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { PlayerDTO } from "../../dto/playerDto";
+import { PlayerId } from "../../../domain/value-objects/playerId";
 
 
 interface ResisterPlayerDTO {
@@ -41,7 +42,7 @@ export class ResisterPlayerUseCase {
       }
 
       const player = new Player(
-        null,
+        new PlayerId(),
         conventionId,
         new PlayerName(data.name),
         new Points(0),
@@ -51,8 +52,8 @@ export class ResisterPlayerUseCase {
         new Goals(0),
         new Concede(0)
       );
-      const id = await this.playerRepository.save(client, player);
-      player.setId(id);
+
+      await this.playerRepository.save(client, player);
 
       return player.getStats();
     } catch (error) {

@@ -1,5 +1,5 @@
 export interface PlayerDTO {
-  id: number | null
+  id: string
   name: string
   points: number
   wins: number

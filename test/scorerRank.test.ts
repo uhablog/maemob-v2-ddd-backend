@@ -2,11 +2,7 @@ import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
 
 import app from "../src";
-import { closeDatabase, resetDatabase } from "./setupDatabase";
-
-// beforeAll(async () => {
-//   await resetDatabase();
-// });
+import { closeDatabase } from "./setupDatabase";
 
 let testData: TestData;
 beforeEach(async () => {
@@ -20,7 +16,7 @@ afterAll(async () => {
 const ERROR_MESSAGES = {
   missingConventionOrPlayerId: "convention_idもしくはplayer_idどちらか1つを指定して下さい。",
   invalidConventionIdFormat: "convention_idはUUID形式で指定して下さい。",
-  invalidPlayerIdFormat: "player_idは1以上の整数で指定して下さい。"
+  invalidPlayerIdFormat: "player_idはUUID形式で指定して下さい。"
 }
 
 /**
@@ -31,7 +27,7 @@ const ERROR_MESSAGES = {
  * @param name 得点者
  * @returns リクエスト結果
  */
-const createScorer = async (conventionId: string, matchId: number, playerId: number, name: string) => {
+const createScorer = async (conventionId: string, matchId: number, playerId: string, name: string) => {
   return await request(app)
     .post(`/api/conventions/${conventionId}/matches/${matchId}/scorers`)
     .send({ player_id: playerId, name });
@@ -39,7 +35,7 @@ const createScorer = async (conventionId: string, matchId: number, playerId: num
 
 type TestData = {
   conventionId: string
-  playerIds: number[]
+  playerIds: string[]
   matchIds: number[]
 }
 /**
@@ -66,17 +62,17 @@ const createTestData = async (): Promise<TestData> => {
   const player1 = await request(app)
     .post(`/api/conventions/${conventionId}/players`)
     .send({ name: 'Taro' });
-  const player1Id = player1.body.id as number;
+  const player1Id = player1.body.id as string;
 
   const player2 = await request(app)
     .post(`/api/conventions/${conventionId}/players`)
     .send({ name: 'Hanako' });
-  const player2Id = player2.body.id as number;
+  const player2Id = player2.body.id as string;
 
   const player3 = await request(app)
     .post(`/api/conventions/${conventionId}/players`)
     .send({ name: 'Saburo' });
-  const player3Id = player3.body.id as number;
+  const player3Id = player3.body.id as string;
 
   const match1 = await request(app)
     .post(`/api/conventions/${conventionId}/matches`)
@@ -195,7 +191,7 @@ describe('【異常系】GET /scorers 得点ランキングの取得', () => {
 
     try{
       const response = await request(app)
-        .get(`/api/scorers?convention_id=${uuidv4()}&player_id=${1}`)
+        .get(`/api/scorers?convention_id=${uuidv4()}&player_id=${uuidv4()}`)
         .send();
 
       expect(response.status).toBe(400);
@@ -222,11 +218,11 @@ describe('【異常系】GET /scorers 得点ランキングの取得', () => {
     }
   });
 
-  it('指定したplayer idが1以上の整数ではない', async () => {
+  it('指定したplayer idが1がuuid形式ではない', async () => {
 
     try {
       const response = await request(app)
-        .get(`/api/scorers?player_id=0`)
+        .get(`/api/scorers?player_id=string`)
         .send();
 
       expect(response.status).toBe(400);
@@ -261,7 +257,7 @@ describe('【異常系】GET /scorers 得点ランキングの取得', () => {
   it('指定したplayer idが存在しない', async () => {
 
     try {
-      const testPlayerId = 5000;
+      const testPlayerId = uuidv4();
       const response = await request(app)
         .get(`/api/scorers?player_id=${testPlayerId}`)
         .send();

@@ -3,12 +3,13 @@ import { IMatchRepository } from "../../domain/repositories/matchRepository";
 import { Match } from "../../domain/entities/match";
 import { Score } from "../../domain/value-objects/score";
 import { ConventionID } from "../../domain/value-objects/conventionId";
+import { PlayerId } from "../../domain/value-objects/playerId";
 
 /**
  * 試合のリポジトリ
  */
 export class PostgresMatchRepository implements IMatchRepository {
-  constructor(private readonly db: Pool){}
+  constructor(){}
   
   async save(client: PoolClient, match: Match): Promise<number> {
     try {
@@ -30,8 +31,8 @@ export class PostgresMatchRepository implements IMatchRepository {
         ;
       `, [
         match.conventionId.toString(),
-        match.homePlayerId,
-        match.awayPlayerId,
+        match.homePlayerId.toString(),
+        match.awayPlayerId.toString(),
         match.homeScore.value,
         match.awayScore.value
       ]);
@@ -63,8 +64,8 @@ export class PostgresMatchRepository implements IMatchRepository {
     return results.rows.map(row => new Match(
       row.id,
       new ConventionID(row.convention_id),
-      row.home_player_id,
-      row.away_player_id,
+      new PlayerId(row.home_player_id),
+      new PlayerId(row.away_player_id),
       new Score(row.home_score),
       new Score(row.away_score),
       row.match_date
@@ -95,8 +96,8 @@ export class PostgresMatchRepository implements IMatchRepository {
     return new Match(
       result.rows[0].id,
       new ConventionID(result.rows[0].convention_id),
-      result.rows[0].home_player_id,
-      result.rows[0].away_player_id,
+      new PlayerId(result.rows[0].home_player_id),
+      new PlayerId(result.rows[0].away_player_id),
       new Score(result.rows[0].home_score),
       new Score(result.rows[0].away_score),
       result.rows[0].match_date

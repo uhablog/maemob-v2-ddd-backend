@@ -3,13 +3,18 @@ import { v4 as uuidv4 } from 'uuid';
 
 import app from '../src/index';  // エントリーポイント
 
-import { resetDatabase, closeDatabase } from './setupDatabase';
+import { closeDatabase } from './setupDatabase';
 
 const createdPlayerIds: number[] = [];
 let createdConventionId: string = "";
 
+const ERROR_MESSAGES = {
+  invalidScore: "スコアは0以上で指定して下さい。",
+  invalidConventionIdFormat: "convention idはUUID形式で指定して下さい",
+  invalidRequestBody: "全てのプロパティを指定して下さい。",
+}
+
 beforeAll(async () => {
-  // await resetDatabase(); // テスト開始前にデータベースを初期化
 
   const responseConvention = await request(app)
     .post('/api/conventions')
@@ -26,10 +31,6 @@ beforeAll(async () => {
     .send({ name: 'Hanako' });
   createdPlayerIds[1] = responseHanako.body.id;
 });
-
-// afterEach(async () => {
-//   await resetDatabase(); // 各テスト後にリセット
-// });
 
 afterAll(async () => {
   await closeDatabase(); // テスト終了後に接続を終了
@@ -166,6 +167,7 @@ describe('【異常系】POST /matches', () => {
       });
 
     expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidRequestBody);
   });
 
   it("リクエストボディにawayPlayerId指定がないときは400", async () => {
@@ -178,6 +180,7 @@ describe('【異常系】POST /matches', () => {
       });
 
     expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidRequestBody);
   });
 
   it("リクエストボディにhomeScore指定がないときは400", async () => {
@@ -190,6 +193,7 @@ describe('【異常系】POST /matches', () => {
       });
 
     expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidRequestBody);
   });
 
   it("リクエストボディにawayScore指定がないときは400", async () => {
@@ -202,6 +206,7 @@ describe('【異常系】POST /matches', () => {
       });
 
     expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidRequestBody);
   });
 
   it("homeScoreがマイナスの時は400", async () => {
@@ -215,7 +220,7 @@ describe('【異常系】POST /matches', () => {
       });
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("スコアは0以上で指定して下さい。");
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidScore);
   });
 
   it("awayScoreがマイナスの時は400", async () => {
@@ -229,7 +234,7 @@ describe('【異常系】POST /matches', () => {
       });
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("スコアは0以上で指定して下さい。");
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidScore);
   });
 
   it("convention idがUUID形式でないときは400エラー", async () => {
@@ -241,6 +246,9 @@ describe('【異常系】POST /matches', () => {
         homeScore: 1,
         awayScore: 0 
       });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidConventionIdFormat);
   });
 
   it("指定したconvention idの大会が存在しない場合は404エラー", async () => {
@@ -264,6 +272,7 @@ describe ('【正常系】GET /matches 試合の取得', () => {
   it('全ての試合が取得できる', async () => {
     const response = await request(app).get(`/api/conventions/${createdConventionId}/matches`);
 
+    // TODO: resultsで返却しない
     expect(response.status).toBe(200);
     expect(response.body.results.length).toBeGreaterThanOrEqual(3);
     expect(response.body.results[0]).toHaveProperty('homePlayerId');

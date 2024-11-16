@@ -1,6 +1,6 @@
-interface ResisterScorerDTO {
+export interface ResisterScorerDTO {
   name: string
-  player_id: number
+  player_id: string
   match_id: number
   convention_id: string
 }

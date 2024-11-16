@@ -2,6 +2,7 @@ import { IConventionRepository } from "../../../domain/repositories/conventionRe
 import { IScorerRepository } from "../../../domain/repositories/scorerRepository";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
+import { ScorerCountDTO } from "../../dto/scorerCountDto";
 
 export class FindScorerRankingByConventionIdUseCase {
 

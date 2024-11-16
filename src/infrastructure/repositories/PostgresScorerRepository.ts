@@ -7,6 +7,7 @@ import { ScorerCount } from "../../domain/entities/scorerCount";
 import { ConventionID } from "../../domain/value-objects/conventionId";
 import { PlayerName } from "../../domain/value-objects/playerName";
 import { ScoreCount } from "../../domain/value-objects/scoreCount";
+import { PlayerId } from "../../domain/value-objects/playerId";
 
 export class PostgresScorerRepository implements IScorerRepository {
 
@@ -30,7 +31,7 @@ export class PostgresScorerRepository implements IScorerRepository {
     `, [
       scorer.id.toString(),
       scorer.matchId,
-      scorer.playerId,
+      scorer.playerId.toString(),
       scorer.name.value
     ]);
   };
@@ -52,7 +53,7 @@ export class PostgresScorerRepository implements IScorerRepository {
       new ScorerId(row.id),
       new ScorerName(row.name),
       row.match_id,
-      row.player_id
+      new PlayerId(row.player_id)
     ));
   };
 
@@ -81,14 +82,14 @@ export class PostgresScorerRepository implements IScorerRepository {
     `, [ conventionId.toString() ]);
 
     return results.rows.map( row => new ScorerCount(
-      row.player_id,
+      new PlayerId(row.player_id),
       new PlayerName(row.player_name),
       new ScorerName(row.scorer_name),
       new ScoreCount(Number(row.goals))
     ));
   };
 
-  async findScorerRankingByPlayerId(playerId: number): Promise<ScorerCount[]> {
+  async findScorerRankingByPlayerId(playerId: PlayerId): Promise<ScorerCount[]> {
 
     const results = await this.db.query(`
       SELECT 
@@ -110,10 +111,10 @@ export class PostgresScorerRepository implements IScorerRepository {
         s.name, p.name, p.id
       ORDER BY 
         goals DESC;
-    `, [ playerId ]);
+    `, [ playerId.toString() ]);
 
     return results.rows.map( row => new ScorerCount(
-      row.player_id,
+      new PlayerId(row.player_id),
       new PlayerName(row.player_name),
       new ScorerName(row.scorer_name),
       new ScoreCount(Number(row.goals))

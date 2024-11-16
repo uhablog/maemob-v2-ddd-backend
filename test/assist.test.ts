@@ -2,15 +2,20 @@ import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
 
 import app from '../src/index';
-import { closeDatabase, resetDatabase } from './setupDatabase';
-
-// beforeAll(async () => {
-//   await resetDatabase();
-// });
+import { closeDatabase } from './setupDatabase';
 
 afterAll(async () => {
   await closeDatabase();
 });
+
+const ERROR_MESSAGES = {
+  noName: "nameは入力必須です。",
+  noPlayerId: "player_idは入力必須です。",
+  invalidPlayerIdFormat: "player_idはUUID形式で指定して下さい。",
+  noMatchedPlayer: "試合を行ったユーザーを指定して下さい。",
+  overAssistHome: "ホームチームのアシスト数が得点数に到達しました。",
+  overAssistAway: "アウェイチームのアシスト数が得点数に到達しました。",
+}
 
 /**
  * テスト用に大会・プレイヤー・試合を作成する
@@ -65,9 +70,9 @@ describe('【正常系】POST /assist アシストの作成', () => {
     
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty("id");
-    expect(response.body).toHaveProperty("match_id");
-    expect(response.body).toHaveProperty("player_id");
-    expect(response.body).toHaveProperty("name");
+    expect(response.body.match_id).toBe(testData.matchId);
+    expect(response.body.player_id).toBe(testData.playerIds[0]);
+    expect(response.body.name).toBe("Leo Messi");
   });
 
 });
@@ -87,7 +92,7 @@ describe('【異常系】POST /assists アシストの作成', () => {
       });
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("nameは入力必須です。");
+    expect(response.body.message).toBe(ERROR_MESSAGES.noName);
   });
 
   it('player_idの指定がない場合400', async () => {
@@ -100,10 +105,10 @@ describe('【異常系】POST /assists アシストの作成', () => {
       });
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("player_idは入力必須です。");
+    expect(response.body.message).toBe(ERROR_MESSAGES.noPlayerId);
   });
 
-  it('player_idが数字でない場合400', async () => {
+  it('player_idがUUID形式でない場合400', async () => {
 
     const testData = await createPlayerAndConventionAndMatch();
     const response = await request(app)
@@ -114,7 +119,7 @@ describe('【異常系】POST /assists アシストの作成', () => {
       });
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("player_idは1以上の整数で指定して下さい。");
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidPlayerIdFormat);
   });
 
   it('指定したplayer_idがmatchに関係ない場合400', async () => {
@@ -123,12 +128,12 @@ describe('【異常系】POST /assists アシストの作成', () => {
     const response = await request(app)
       .post(`/api/conventions/${testData.conventionId}/matches/${testData.matchId}/assists`)
       .send({
-        player_id: 5000,
+        player_id: uuidv4(),
         name: "Leo Messi"
       });
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe("試合を行ったユーザーを指定して下さい。");
+    expect(response.body.message).toBe(ERROR_MESSAGES.noMatchedPlayer);
   });
 
   it('アシスト数が試合の得点数を超える', async () => {
@@ -167,7 +172,7 @@ describe('【異常系】POST /assists アシストの作成', () => {
         name: "Leo Messi"
       });
     expect(responsePostAssists5.status).toBe(400);
-    expect(responsePostAssists5.body.message).toBe("ホームチームのアシスト数が得点数に到達しました。");
+    expect(responsePostAssists5.body.message).toBe(ERROR_MESSAGES.overAssistHome);
 
     // アシストの作成
     const responsePostAssistsAway1 = await request(app)
@@ -195,7 +200,7 @@ describe('【異常系】POST /assists アシストの作成', () => {
         name: "Leo Messi"
       });
     expect(responsePostAssistsAway4.status).toBe(400);
-    expect(responsePostAssistsAway4.body.message).toBe("アウェイチームのアシスト数が得点数に到達しました。");
+    expect(responsePostAssistsAway4.body.message).toBe(ERROR_MESSAGES.overAssistAway);
   });
   
   

@@ -53,8 +53,8 @@ export class AssistContoroller {
       return;
     }
 
-    if (!isPositiveInteger(player_id)) {
-      res.status(400).json({ message: "player_idは1以上の整数で指定して下さい。" });
+    if (!isValidUUID(player_id)) {
+      res.status(400).json({ message: "player_idはUUID形式で指定して下さい。" });
       return;
     }
 
@@ -116,8 +116,8 @@ export class AssistContoroller {
     }
 
     // player_idが1以上の整数かチェック
-    if (playerId !== undefined && !isPositiveInteger(playerId)) {
-      res.status(400).json({ message: "player_idは1以上の整数で指定して下さい。" });
+    if (playerId !== undefined && !isValidUUID(playerId)) {
+      res.status(400).json({ message: "player_idはUUID形式で指定して下さい。" });
       return;
     }
 
@@ -127,7 +127,7 @@ export class AssistContoroller {
       if (conventionId !== undefined) {
         results = await this.findAssistRankingByConventionIdUseCase.execute(conventionId);
       } else if (playerId !== undefined) {
-        results = await this.findAssistRankingByPlayerIdUseCase.execute(Number(playerId));
+        results = await this.findAssistRankingByPlayerIdUseCase.execute(playerId);
       }
 
       res.status(200).json(results);

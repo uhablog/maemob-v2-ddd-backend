@@ -16,7 +16,7 @@ afterAll(async () => {
 const ERROR_MESSAGES = {
   missingConventionOrPlayerId: "convention_idもしくはplayer_idどちらか1つを指定して下さい。",
   invalidConventionIdFormat: "convention_idはUUID形式で指定して下さい。",
-  invalidPlayerIdFormat: "player_idは1以上の整数で指定して下さい。"
+  invalidPlayerIdFormat: "player_idはUUID形式で指定して下さい。"
 }
 
 /**
@@ -257,7 +257,7 @@ describe('【異常系】GET /assists アシストランキングの取得', () 
   it('指定したplayer idが存在しない', async () => {
 
     try {
-      const testPlayerId = 5000;
+      const testPlayerId = uuidv4();
       const response = await request(app)
         .get(`/api/assists?player_id=${testPlayerId}`)
         .send();

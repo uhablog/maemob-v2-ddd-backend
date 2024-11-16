@@ -4,6 +4,7 @@ import { IPlayerRepository } from "../../../domain/repositories/playerRepository
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { PlayerDTO } from "../../dto/playerDto";
+import { PlayerId } from "../../../domain/value-objects/playerId";
 
 export class FindPlayerByIdUseCase {
   constructor(
@@ -12,7 +13,7 @@ export class FindPlayerByIdUseCase {
     private readonly db: Pool
   ) {}
 
-  async execute(conventionId: string, id: number): Promise<PlayerDTO> {
+  async execute(conventionId: string, id: string): Promise<PlayerDTO> {
 
     // 大会の存在確認(存在しなければ404 NOT FOUND)
     const convention = await this.conventionRepository.findById(new ConventionID(conventionId));
@@ -25,7 +26,7 @@ export class FindPlayerByIdUseCase {
 
     try {
       
-      const player = await this.playerRepository.findById(client, id);
+      const player = await this.playerRepository.findById(client, new PlayerId(id));
 
       if (player == null) {
         throw new NotFoundError(`player id ${id}`);

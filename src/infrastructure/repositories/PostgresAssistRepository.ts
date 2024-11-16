@@ -7,6 +7,7 @@ import { AssistCount } from "../../domain/entities/assistCount";
 import { ConventionID } from "../../domain/value-objects/conventionId";
 import { PlayerName } from "../../domain/value-objects/playerName";
 import { AssistCounts } from "../../domain/value-objects/assistCounts";
+import { PlayerId } from "../../domain/value-objects/playerId";
 
 export class PostgresAssistRepository implements IAssistRepository {
 
@@ -30,7 +31,7 @@ export class PostgresAssistRepository implements IAssistRepository {
     `, [
       assist.id.toString(),
       assist.matchId,
-      assist.playerId,
+      assist.playerId.toString(),
       assist.name.value
     ]);
   };
@@ -52,7 +53,7 @@ export class PostgresAssistRepository implements IAssistRepository {
       new AssistId(row.id),
       new AssistName(row.name),
       row.match_id,
-      row.player_id
+      new PlayerId(row.player_id)
     ));
   };
 
@@ -80,14 +81,14 @@ export class PostgresAssistRepository implements IAssistRepository {
     `, [ conventionId.toString() ]);
 
     return results.rows.map( row => new AssistCount(
-      row.player_id,
+      new PlayerId(row.player_id),
       new PlayerName(row.player_name),
       new AssistName(row.assist_name),
       new AssistCounts(Number(row.assists))
     ));
   }
 
-  async findAssistRankingByPlayerId(playerId: number): Promise<AssistCount[]> {
+  async findAssistRankingByPlayerId(playerId: PlayerId): Promise<AssistCount[]> {
     const results = await this.db.query(`
       SELECT 
         a.name AS assist_name,
@@ -108,10 +109,10 @@ export class PostgresAssistRepository implements IAssistRepository {
         a.name, p.name, p.id
       ORDER BY 
         assists DESC;
-    `, [ playerId ]);
+    `, [ playerId.toString() ]);
 
     return results.rows.map( row => new AssistCount(
-      row.player_id,
+      new PlayerId(row.player_id),
       new PlayerName(row.player_name),
       new AssistName(row.assist_name),
       new AssistCounts(Number(row.assists))

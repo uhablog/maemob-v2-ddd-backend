@@ -3,6 +3,7 @@ import { IPlayerRepository } from "../../../domain/repositories/playerRepository
 import { IScorerRepository } from "../../../domain/repositories/scorerRepository";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { ScorerCountDTO } from "../../dto/scorerCountDto";
+import { PlayerId } from "../../../domain/value-objects/playerId";
 
 export class FindScorerRankingByPlayerIdUseCase {
 
@@ -13,7 +14,7 @@ export class FindScorerRankingByPlayerIdUseCase {
   ) {}
 
   async execute(
-    playerId: number
+    playerId: string
   ): Promise<ScorerCountDTO[]> {
     const client = await this.db.connect();
 
@@ -21,14 +22,14 @@ export class FindScorerRankingByPlayerIdUseCase {
       /**
        * プレイヤーの存在確認
        */
-      const player = await this.playerRepository.findById(client, playerId);
+      const player = await this.playerRepository.findById(client, new PlayerId(playerId));
 
       if (player == null) {
         throw new NotFoundError(`player id: ${playerId}`);
       }
 
       // 得点ランキングの取得
-      const results = await this.scorerRepository.findScorerRankingByPlayerId(playerId);
+      const results = await this.scorerRepository.findScorerRankingByPlayerId(new PlayerId(playerId));
 
       return results.map( (result) => result.toJSON() as ScorerCountDTO);
     } catch (error) {

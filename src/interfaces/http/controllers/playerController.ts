@@ -27,9 +27,7 @@ export class PlayerController {
 
     try {
       const results = await this.findAllPlayerUseCase.execute(conventionId);
-      res.status(200).json({
-        results
-      });
+      res.status(200).json(results);
     } catch (error) {
 
       if (error instanceof NotFoundError) {
@@ -45,17 +43,12 @@ export class PlayerController {
   async findById(req: Request, res: Response) {
 
     const conventionId = req.params.convention_id;
-    const playerId = Number(req.params.id);
+    const playerId = req.params.id;
 
     // validation
-    if (playerId < 1) {
+    if (!isValidUUID(playerId)) {
       res.status(400).json({
-        message: "idは1以上で指定して下さい"
-      });
-      return;
-    } else if (Number.isNaN(playerId)) {
-      res.status(400).json({
-        message: "idは1以上の整数で指定して下さい"
+        message: "idはUUID形式で指定して下さい"
       });
       return;
     }

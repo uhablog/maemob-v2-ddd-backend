@@ -28,8 +28,8 @@ export class FindAllMatchesUseCase {
       return results.map((result) => ({
         id: result.id as number,
         conventionId: result.conventionId.toString(),
-        homePlayerId: result.homePlayerId,
-        awayPlayerId: result.awayPlayerId,
+        homePlayerId: result.homePlayerId.toString(),
+        awayPlayerId: result.awayPlayerId.toString(),
         homeScore: result.homeScore.value,
         awayScore: result.awayScore.value,
         matchDate: result.matchDate.toISOString()

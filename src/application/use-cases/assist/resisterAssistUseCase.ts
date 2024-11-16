@@ -9,6 +9,7 @@ import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { BadRequestError } from "../../../shared/errors/BadRequest";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { ResisterAssistDTO } from "../../dto/resisterAssistDto";
+import { PlayerId } from "../../../domain/value-objects/playerId";
 
 export class ResisterAssistUseCase {
 
@@ -39,7 +40,7 @@ export class ResisterAssistUseCase {
       }
 
       // アシストのプレイヤーIDは試合のホームかアウェイのプレイヤーでなければおかしい
-      if (match.homePlayerId !== data.player_id && match.awayPlayerId !== data.player_id) {
+      if (match.homePlayerId.toString() !== data.player_id && match.awayPlayerId.toString() !== data.player_id) {
         throw new BadRequestError('試合を行ったユーザーを指定して下さい。');
       }
       
@@ -50,9 +51,17 @@ export class ResisterAssistUseCase {
        * アシストがホームチームの場合、ホームチームの得点数をアシスト数が超えない
        * アシストがアウェイチームの場合、アウェイチームの得点数をアシスト数が超えない
        */
-      if (data.player_id === match.homePlayerId && results.filter(result => result.playerId === match.homePlayerId).length === match.homeScore.value) {
+      if (
+        data.player_id === match.homePlayerId.toString()
+        && results.filter(result => result.playerId.equals(match.homePlayerId)).length === match.homeScore.value
+      ) {
+
         throw new BadRequestError(`ホームチームのアシスト数が得点数に到達しました。`);
-      } else if (data.player_id === match.awayPlayerId && results.filter(result => result.playerId === match.awayPlayerId).length === match.awayScore.value) {
+      } else if (
+        data.player_id === match.awayPlayerId.toString()
+        && results.filter(result => result.playerId.equals(match.awayPlayerId)).length === match.awayScore.value
+      ) {
+
         throw new BadRequestError(`アウェイチームのアシスト数が得点数に到達しました。`);
       };
 
@@ -63,7 +72,7 @@ export class ResisterAssistUseCase {
         assistId,
         new AssistName(data.name),
         data.match_id,
-        data.player_id
+        new PlayerId(data.player_id)
       );
 
       await this.assistRepository.save(assist);

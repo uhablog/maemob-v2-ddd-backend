@@ -9,6 +9,7 @@ import { Draws } from "../../domain/value-objects/draws";
 import { Losses } from "../../domain/value-objects/losses";
 import { Goals } from "../../domain/value-objects/goals";
 import { Concede } from "../../domain/value-objects/concede";
+import { PlayerId } from "../../domain/value-objects/playerId";
 
 export class PostgresPlayerRepository implements IPlayerRepository {
   constructor(){}
@@ -20,10 +21,11 @@ export class PostgresPlayerRepository implements IPlayerRepository {
    * @param player 保存するプレイヤー
    * @returns プレイヤーID
    */
-  async save(client: PoolClient, player: Player): Promise<number>{
+  async save(client: PoolClient, player: Player): Promise<string>{
     try {
       const playerStats = player.getStats();
       const inputValues = [
+        playerStats.id,
         playerStats.convention_id,
         playerStats.name,
         playerStats.points,
@@ -32,19 +34,17 @@ export class PostgresPlayerRepository implements IPlayerRepository {
         playerStats.losses,
         playerStats.goals,
         playerStats.concede,
-        playerStats.id
       ];
 
       // idが存在しているかチェックして存在していればUpdate、存在していなければInsertを行う
       let dbPlayer: Player | null = null;
-      if (playerStats.id !== null) {
-        dbPlayer = await this.findById(client, playerStats.id);
-      }
+      dbPlayer = await this.findById(client, new PlayerId(playerStats.id));
 
-      if (dbPlayer === null || playerStats.id === null) {
+      if (dbPlayer === null) {
 
         const result = await client.query(`
           INSERT INTO players (
+            id,
             convention_id,
             name,
             points,
@@ -61,10 +61,11 @@ export class PostgresPlayerRepository implements IPlayerRepository {
             $5,
             $6,
             $7,
-            $8
+            $8,
+            $9
           )
           RETURNING id
-        `, inputValues.slice(0, -1));
+        `, inputValues);
 
         return result.rows[0].id;
       } else {
@@ -73,16 +74,16 @@ export class PostgresPlayerRepository implements IPlayerRepository {
           UPDATE
             players
           SET
-            convention_id = $1,
-            name = $2,
-            points = $3,
-            wins = $4,
-            draws = $5,
-            losses = $6,
-            goals = $7,
-            concede = $8
+            convention_id = $2,
+            name = $3,
+            points = $4,
+            wins = $5,
+            draws = $6,
+            losses = $7,
+            goals = $8,
+            concede = $9
           WHERE
-            id = $9
+            id = $1
         `, inputValues);
 
         return playerStats.id;
@@ -98,7 +99,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
    * @param id ポイント変更するユーザーID
    * @param points 追加するポイント
    */
-  async updatePoints(client: PoolClient, id: number, points: Points): Promise<void> {
+  async updatePoints(client: PoolClient, id: PlayerId, points: Points): Promise<void> {
     try {
       await client.query(`
         UPDATE
@@ -109,7 +110,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
           id = $2
       ;`, [
         points.value,
-        id
+        id.toString()
       ]);
 
     } catch (error) {
@@ -144,7 +145,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
     `, [conventionId]);
 
     return result.rows.map(row => new Player(
-      row.id,
+      new PlayerId(row.id),
       new ConventionID(row.convention_id),
       new PlayerName(row.name),
       new Points(row.points),
@@ -161,7 +162,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
    * @param player 取得するユーザー
    * @returns 取得結果
    */
-  async findById(client: PoolClient, id: number): Promise<Player | null> {
+  async findById(client: PoolClient, id: PlayerId): Promise<Player | null> {
     try {
       const result = await client.query(`
         SELECT
@@ -178,7 +179,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
           players
         WHERE
           id = $1
-      `, [ id ]);
+      `, [ id.toString() ]);
 
       // 1でなければおかしい
       if (result.rowCount !== 1) {
@@ -186,7 +187,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
       }
 
       return new Player(
-        result.rows[0].id,
+        new PlayerId(result.rows[0].id),
         new ConventionID(result.rows[0].convention_id),
         new PlayerName(result.rows[0].name),
         new Points(result.rows[0].points),

@@ -10,7 +10,7 @@ import { FindAssistRankingByConventionIdUseCase } from "../../../application/use
 import { FindAssistRankingByPlayerIdUseCase } from "../../../application/use-cases/assist/findAssistRankingByPlayerId";
 import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresPlayerRepository";
 
-const matchRepository = new PostgresMatchRepository(pool);
+const matchRepository = new PostgresMatchRepository();
 const conventionRepository = new PostgresConventionRepository(pool);
 const assistRepository = new PostgresAssistRepository(pool);
 const playerRepository = new PostgresPlayerRepository();

@@ -1,7 +1,7 @@
 export interface ResisterMatchDTO {
   conventionId: string
-  homePlayerId: number
-  awayPlayerId: number
+  homePlayerId: string
+  awayPlayerId: string
   homeScore: number
   awayScore: number
 };

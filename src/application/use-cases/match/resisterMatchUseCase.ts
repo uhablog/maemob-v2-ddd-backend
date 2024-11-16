@@ -7,6 +7,7 @@ import { Score } from "../../../domain/value-objects/score";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
+import { PlayerId } from "../../../domain/value-objects/playerId";
 
 
 export class ResisterMatchUseCase {
@@ -36,8 +37,8 @@ export class ResisterMatchUseCase {
       const resisterMatch = new Match(
         null,
         conventionId,
-        match.homePlayerId,
-        match.awayPlayerId,
+        new PlayerId(match.homePlayerId),
+        new PlayerId(match.awayPlayerId),
         new Score(match.homeScore),
         new Score(match.awayScore),
         new Date()
@@ -50,11 +51,11 @@ export class ResisterMatchUseCase {
       const awayPlayer = await this.playerRepository.findById(client, resisterMatch.awayPlayerId);
 
       if (homePlayer == null) {
-        throw new NotFoundError(`player id ${resisterMatch.homePlayerId}`);
+        throw new NotFoundError(`player id ${resisterMatch.homePlayerId.toString()}`);
       }
 
       if (awayPlayer == null) {
-        throw new NotFoundError(`player id ${resisterMatch.awayPlayerId}`)
+        throw new NotFoundError(`player id ${resisterMatch.awayPlayerId.toString()}`)
       }
 
       // 両者の得点・失点数の加算

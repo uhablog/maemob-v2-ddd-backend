@@ -257,7 +257,7 @@ describe('【異常系】GET /assists アシストランキングの取得', () 
   it('指定したplayer idが存在しない', async () => {
 
     try {
-      const testPlayerId = 5000;
+      const testPlayerId = uuidv4();
       const response = await request(app)
         .get(`/api/assists?player_id=${testPlayerId}`)
         .send();

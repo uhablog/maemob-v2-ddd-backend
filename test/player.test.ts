@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '../src/index';  // エントリーポイント
-import { closeDatabase, resetDatabase } from './setupDatabase';
+import { closeDatabase } from './setupDatabase';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,7 +11,7 @@ afterAll(async () => {
 const ERROR_MESSAGES = {
   noname: "nameは必須です",
   invalidConventionIdFormat: "convention idはUUID形式で指定して下さい",
-  invalidPlayerIdFormat: "player_idはUUID形式で指定して下さい。",
+  invalidPlayerIdFormat: "idはUUID形式で指定して下さい",
 }
 
 describe('【正常系】プレイヤーの作成', () => {
@@ -143,7 +143,7 @@ describe('【正常系】プレイヤーの取得', () => {
     const response = await request(app).get(`/api/conventions/${createdConventionId}/players`);
 
     expect(response.status).toBe(200);
-    expect(response.body.results.length).toBe(3);  // プレイヤーが存在することを確認
+    expect(response.body.length).toBe(3);  // プレイヤーが存在することを確認
     expect(response.body[0].name).toBe('Taro');
     expect(response.body[0].points).toBe(7);
     expect(response.body[0].wins).toBe(2);
@@ -217,7 +217,7 @@ describe('【異常系】プレイヤーの取得(ID指定)', () => {
       .send();
 
     expect(response.status).toBe(404);
-    expect(response.body.message).toBe(`convention id: ${testPlayerId} not found`);
+    expect(response.body.message).toBe(`player id ${testPlayerId} not found`);
   });
 
   it('IDの指定が不適切(string)', async () => {

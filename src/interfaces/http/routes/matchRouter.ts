@@ -7,7 +7,7 @@ import { ResisterMatchUseCase } from "../../../application/use-cases/match/resis
 import { PostgresPlayerRepository } from "../../../infrastructure/repositories/PostgresPlayerRepository";
 import { PostgresConventionRepository } from "../../../infrastructure/repositories/PostgresConventionRepository";
 
-const matchRepository = new PostgresMatchRepository(pool);
+const matchRepository = new PostgresMatchRepository();
 const playerRepository = new PostgresPlayerRepository();
 const conventionRepository = new PostgresConventionRepository(pool);
 

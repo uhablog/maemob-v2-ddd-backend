@@ -1,4 +1,5 @@
 import { ConventionID } from "../value-objects/conventionId";
+import { PlayerId } from "../value-objects/playerId";
 import { Score } from "../value-objects/score";
 
 export class Match {
@@ -6,8 +7,8 @@ export class Match {
   constructor(
     private readonly _id: number | null,
     private readonly _conventionId: ConventionID,
-    private readonly _homePlayerId: number,
-    private readonly _awayPlayerId: number,
+    private readonly _homePlayerId: PlayerId,
+    private readonly _awayPlayerId: PlayerId,
     private readonly _homeScore: Score,
     private readonly _awayScore: Score,
     private readonly _matchDate: Date
@@ -21,11 +22,11 @@ export class Match {
     return this._conventionId;
   };
 
-  get homePlayerId(): number {
+  get homePlayerId(): PlayerId {
     return this._homePlayerId;
   }
 
-  get awayPlayerId(): number {
+  get awayPlayerId(): PlayerId {
     return this._awayPlayerId;
   }
 

@@ -4,7 +4,6 @@ import { FindScorerByMatchIdUseCase } from "../../../application/use-cases/score
 import { ResisterScorerUseCase } from "../../../application/use-cases/scorer/resisterScorerUseCase";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { BadRequestError } from "../../../shared/errors/BadRequest";
-import { isPositiveInteger } from "../../../shared/common/positiveInteger";
 import { isValidUUID } from "../../../shared/common/ValidUUID";
 import { FindScorerRankingByConventionIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByConventionId";
 import { FindScorerRankingByPlayerIdUseCase } from "../../../application/use-cases/scorer/findScorerRankingByPlayerId";
@@ -64,8 +63,8 @@ export class ScorerContoroller {
       return;
     }
 
-    if (!isPositiveInteger(player_id)) {
-      res.status(400).json({ message: "player_idは1以上の整数で指定して下さい。" });
+    if (!isValidUUID(player_id)) {
+      res.status(400).json({ message: "player_idはUUID形式で指定して下さい。" });
       return;
     }
 
@@ -120,8 +119,8 @@ export class ScorerContoroller {
     }
 
     // player_idが1以上の整数かチェック
-    if (playerId !== undefined && !isPositiveInteger(playerId)) {
-      res.status(400).json({ message: "player_idは1以上の整数で指定して下さい。" });
+    if (playerId !== undefined && !isValidUUID(playerId)) {
+      res.status(400).json({ message: "player_idはUUID形式で指定して下さい。" });
       return;
     }
 
@@ -131,7 +130,7 @@ export class ScorerContoroller {
       if (conventionId !== undefined) {
         results = await this.findScorerRankingByConventionIdUseCase.execute(conventionId);
       } else if (playerId !== undefined) {
-        results = await this.findScorerRankingByPlayerIdUseCase.execute(Number(playerId));
+        results = await this.findScorerRankingByPlayerIdUseCase.execute(playerId);
       }
 
       res.status(200).json(results);

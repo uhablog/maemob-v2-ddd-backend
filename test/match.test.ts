@@ -272,13 +272,12 @@ describe ('【正常系】GET /matches 試合の取得', () => {
   it('全ての試合が取得できる', async () => {
     const response = await request(app).get(`/api/conventions/${createdConventionId}/matches`);
 
-    // TODO: resultsで返却しない
     expect(response.status).toBe(200);
-    expect(response.body.results.length).toBeGreaterThanOrEqual(3);
-    expect(response.body.results[0]).toHaveProperty('homePlayerId');
-    expect(response.body.results[0]).toHaveProperty('awayPlayerId');
-    expect(response.body.results[0]).toHaveProperty('homeScore');
-    expect(response.body.results[0]).toHaveProperty('awayScore');
+    expect(response.body.length).toBeGreaterThanOrEqual(3);
+    expect(response.body[0]).toHaveProperty('homePlayerId');
+    expect(response.body[0]).toHaveProperty('awayPlayerId');
+    expect(response.body[0]).toHaveProperty('homeScore');
+    expect(response.body[0]).toHaveProperty('awayScore');
   });
 
 });

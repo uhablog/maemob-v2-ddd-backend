@@ -12,6 +12,8 @@ const ERROR_MESSAGES = {
   noName: "nameは入力必須です。",
   noPlayerId: "player_idは入力必須です。",
   invalidPlayerIdFormat: "player_idはUUID形式で指定して下さい。",
+  invalidConventionIdFormat: "convention_idはUUID形式で指定して下さい。",
+  invalidMatchIdFormat: "match_idはUUID形式で指定して下さい。",
   noMatchedPlayer: "試合を行ったユーザーを指定して下さい。",
   overScoreHome: "ホームチームの得点者数が得点数に到達しました。",
   overScoreAway: "アウェイチームの得点者数が得点数に到達しました。",
@@ -120,6 +122,34 @@ describe('【異常系】POST /scorers 得点者の作成', () => {
 
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(ERROR_MESSAGES.invalidPlayerIdFormat);
+  });
+
+  it('convention_idがUUID形式でない場合400', async () => {
+
+    const testData = await createPlayerAndConventionAndMatch();
+    const response = await request(app)
+      .post(`/api/conventions/string/matches/${testData.matchId}/scorers`)
+      .send({
+        player_id: testData.playerIds[0],
+        name: "Leo Messi"
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidConventionIdFormat);
+  });
+
+  it('match_idがUUID形式でない場合400', async () => {
+
+    const testData = await createPlayerAndConventionAndMatch();
+    const response = await request(app)
+      .post(`/api/conventions/${testData.conventionId}/matches/string/scorers`)
+      .send({
+        player_id: testData.playerIds[0],
+        name: "Leo Messi"
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidMatchIdFormat);
   });
 
   it('指定したplayer_idがmatchに関係ない場合400', async () => {
@@ -280,7 +310,35 @@ describe('【正常系】GET /scorers 得点者の取得', () => {
 
 describe('【異常系】GET /scorers 得点者の取得', () => {
 
-  // 404
+  /**
+   * HTTP Status 400
+   */
+  it('convention_idがUUID形式でない場合は400', async () => {
+
+    const testData = await createPlayerAndConventionAndMatch();
+    const response = await request(app)
+      .get(`/api/conventions/no-uuid/matches/${testData.matchId}/scorers`)
+      .send();
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidConventionIdFormat);
+
+  });
+
+  it('match_idがUUID形式でない場合は400', async () => {
+
+    const testData = await createPlayerAndConventionAndMatch();
+    const response = await request(app)
+      .get(`/api/conventions/${testData.conventionId}/matches/no-uuid/scorers`)
+      .send();
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidMatchIdFormat);
+  });
+
+  /**
+   * HTTP Status 404
+   */
   it('指定したconvention_idが存在しない場合404', async () => {
 
     const testUUID = uuidv4();

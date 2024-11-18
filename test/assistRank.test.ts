@@ -27,7 +27,7 @@ const ERROR_MESSAGES = {
  * @param name アシスト
  * @returns レスポンス
  */
-const createAssist = async (conventionId: string, matchId: number, playerId: number, name: string) => {
+const createAssist = async (conventionId: string, matchId: string, playerId: string, name: string) => {
   return await request(app)
     .post(`/api/conventions/${conventionId}/matches/${matchId}/assists`)
     .send({ player_id: playerId, name });
@@ -35,8 +35,8 @@ const createAssist = async (conventionId: string, matchId: number, playerId: num
 
 type TestData = {
   conventionId: string
-  playerIds: number[]
-  matchIds: number[]
+  playerIds: string[]
+  matchIds: string[]
 }
 /**
  * テストデータの作成
@@ -62,17 +62,17 @@ const createTestData = async (): Promise<TestData> => {
   const player1 = await request(app)
     .post(`/api/conventions/${conventionId}/players`)
     .send({ name: 'Taro' });
-  const player1Id = player1.body.id as number;
+  const player1Id = player1.body.id as string;
 
   const player2 = await request(app)
     .post(`/api/conventions/${conventionId}/players`)
     .send({ name: 'Hanako' });
-  const player2Id = player2.body.id as number;
+  const player2Id = player2.body.id as string;
 
   const player3 = await request(app)
     .post(`/api/conventions/${conventionId}/players`)
     .send({ name: 'Saburo' });
-  const player3Id = player3.body.id as number;
+  const player3Id = player3.body.id as string;
 
   const match1 = await request(app)
     .post(`/api/conventions/${conventionId}/matches`)
@@ -112,8 +112,8 @@ const createTestData = async (): Promise<TestData> => {
       player3Id
     ],
     matchIds: [
-      match1.body.id as number,
-      match2.body.id as number,
+      match1.body.id as string,
+      match2.body.id as string,
     ]
   }
 };

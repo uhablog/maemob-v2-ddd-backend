@@ -10,6 +10,7 @@ import { BadRequestError } from "../../../shared/errors/BadRequest";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { ResisterAssistDTO } from "../../dto/resisterAssistDto";
 import { PlayerId } from "../../../domain/value-objects/playerId";
+import { MatchId } from "../../../domain/value-objects/matchId";
 
 export class ResisterAssistUseCase {
 
@@ -32,8 +33,10 @@ export class ResisterAssistUseCase {
     const client = await this.db.connect();
 
     try {
+      
+      const matchId = new MatchId(data.match_id);
       // playerがmatchしているか判定
-      const match = await this.matchRepository.findById(client, data.match_id);
+      const match = await this.matchRepository.findById(client, matchId);
 
       if (match == null) {
         throw new NotFoundError(`match id: ${data.match_id}`);
@@ -45,7 +48,7 @@ export class ResisterAssistUseCase {
       }
       
       // アシスト数は試合の得点数を超えない
-      const results = await this.assistRepository.findByMatchId(data.match_id);
+      const results = await this.assistRepository.findByMatchId(matchId);
 
       /**
        * アシストがホームチームの場合、ホームチームの得点数をアシスト数が超えない
@@ -71,7 +74,7 @@ export class ResisterAssistUseCase {
       const assist = new Assist(
         assistId,
         new AssistName(data.name),
-        data.match_id,
+        matchId,
         new PlayerId(data.player_id)
       );
 

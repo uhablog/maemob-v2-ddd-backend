@@ -1,5 +1,5 @@
 export interface MatchDTO {
-  id: number
+  id: string
   conventionId: string
   homePlayerId: string
   awayPlayerId: string

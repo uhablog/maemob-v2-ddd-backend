@@ -8,6 +8,7 @@ import { ConventionID } from "../../domain/value-objects/conventionId";
 import { PlayerName } from "../../domain/value-objects/playerName";
 import { AssistCounts } from "../../domain/value-objects/assistCounts";
 import { PlayerId } from "../../domain/value-objects/playerId";
+import { MatchId } from "../../domain/value-objects/matchId";
 
 export class PostgresAssistRepository implements IAssistRepository {
 
@@ -30,13 +31,13 @@ export class PostgresAssistRepository implements IAssistRepository {
       );
     `, [
       assist.id.toString(),
-      assist.matchId,
+      assist.matchId.toString(),
       assist.playerId.toString(),
       assist.name.value
     ]);
   };
 
-  async findByMatchId(matchId: number): Promise<Assist[]> {
+  async findByMatchId(matchId: MatchId): Promise<Assist[]> {
     const results = await this.db.query(`
       SELECT
         id
@@ -47,12 +48,12 @@ export class PostgresAssistRepository implements IAssistRepository {
         assists
       WHERE
         match_id = $1
-    `, [ matchId ]);
+    `, [ matchId.toString() ]);
 
     return results.rows.map( row => new Assist(
       new AssistId(row.id),
       new AssistName(row.name),
-      row.match_id,
+      new MatchId(row.match_id),
       new PlayerId(row.player_id)
     ));
   };

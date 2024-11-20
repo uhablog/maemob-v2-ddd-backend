@@ -10,6 +10,7 @@ import { BadRequestError } from "../../../shared/errors/BadRequest";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { ResisterScorerDTO } from "../../dto/resisterScorerDto";
 import { PlayerId } from "../../../domain/value-objects/playerId";
+import { MatchId } from "../../../domain/value-objects/matchId";
 
 export class ResisterScorerUseCase {
 
@@ -32,9 +33,11 @@ export class ResisterScorerUseCase {
     const client = await this.db.connect();
 
     try {
+
+      const matchId = new MatchId(data.match_id);
       
       // playerがmatchしているか判定
-      const match = await this.matchRepository.findById(client, data.match_id);
+      const match = await this.matchRepository.findById(client, matchId);
 
       if (match == null) {
         throw new NotFoundError(`match id: ${data.match_id}`);
@@ -46,7 +49,7 @@ export class ResisterScorerUseCase {
       }
       
       // スコアラーは試合の得点数を超えない
-      const results = await this.scorerRepository.findByMatchId(data.match_id);
+      const results = await this.scorerRepository.findByMatchId(matchId);
 
       /**
        * 得点者がホームチームの場合、ホームチームの得点数を得点数が超えない
@@ -74,7 +77,7 @@ export class ResisterScorerUseCase {
       const scorer = new Scorer(
         scorerId,
         new ScorerName(data.name),
-        data.match_id,
+        matchId,
         new PlayerId(data.player_id)
       );
 

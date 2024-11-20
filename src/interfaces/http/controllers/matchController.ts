@@ -24,7 +24,7 @@ export class MatchController {
 
     try {
       const results = await this.findAllMatchUseCase.execute(conventionId);
-      res.status(200).json({results});
+      res.status(200).json(results);
     } catch (error) {
       console.error(error);
       if (error instanceof NotFoundError) {

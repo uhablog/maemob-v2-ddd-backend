@@ -23,7 +23,7 @@ CREATE TABLE players (
 );
 
 CREATE TABLE matches (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY,
   convention_id UUID NOT NULL,
   home_player_id UUID NOT NULL,
   away_player_id UUID NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE matches (
 
 CREATE TABLE scorers (
   id UUID PRIMARY KEY,
-  match_id INT NOT NULL,
+  match_id UUID NOT NULL,
   player_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   CONSTRAINT fk_scorer_players FOREIGN KEY (player_id)
@@ -47,7 +47,7 @@ CREATE TABLE scorers (
 
 CREATE TABLE assists (
   id UUID PRIMARY KEY,
-  match_id INT NOT NULL,
+  match_id UUID NOT NULL,
   player_id UUID NOT NULL,
   name VARCHAR(50) NOT NULL,
   CONSTRAINT fk_assists_players FOREIGN KEY (player_id)

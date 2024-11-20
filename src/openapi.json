@@ -289,7 +289,8 @@
             "name": "match_id",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -332,7 +333,8 @@
             "name": "match_id",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -387,7 +389,8 @@
             "name": "match_id",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -430,7 +433,8 @@
             "name": "match_id",
             "required": true,
             "schema": {
-              "type": "number"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -611,7 +615,7 @@
       "Match": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "example": 1 },
+          "id": { "type": "string", "format": "uuid" },
           "homePlayerId": { "type": "string", "format": "uuid" },
           "awayPlayerId": { "type": "string", "format": "uuid" },
           "homeScore": { "type": "integer", "example": 2 },

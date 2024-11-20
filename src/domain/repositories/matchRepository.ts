@@ -1,5 +1,6 @@
 import { PoolClient } from "pg";
 import { Match } from "../entities/match";
+import { MatchId } from "../value-objects/matchId";
 
 export interface IMatchRepository {
 
@@ -19,5 +20,5 @@ export interface IMatchRepository {
    * 試合IDを指定して取得する
    * @param id 試合ID
    */
-  findById(client: PoolClient, id: number): Promise<Match | null>;
+  findById(client: PoolClient, id: MatchId): Promise<Match | null>;
 }

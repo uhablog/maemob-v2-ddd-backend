@@ -4,6 +4,7 @@ import { Match } from "../../domain/entities/match";
 import { Score } from "../../domain/value-objects/score";
 import { ConventionID } from "../../domain/value-objects/conventionId";
 import { PlayerId } from "../../domain/value-objects/playerId";
+import { MatchId } from "../../domain/value-objects/matchId";
 
 /**
  * 試合のリポジトリ
@@ -15,6 +16,7 @@ export class PostgresMatchRepository implements IMatchRepository {
     try {
       const result = await client.query(`
         INSERT INTO matches(
+          id,
           convention_id,
           home_player_id,
           away_player_id,
@@ -25,11 +27,13 @@ export class PostgresMatchRepository implements IMatchRepository {
           $2,
           $3,
           $4,
-          $5
+          $5,
+          $6
         )
         RETURNING id, match_date
         ;
       `, [
+        match.id.toString(),
         match.conventionId.toString(),
         match.homePlayerId.toString(),
         match.awayPlayerId.toString(),
@@ -62,7 +66,7 @@ export class PostgresMatchRepository implements IMatchRepository {
     `, [conventionId]);
 
     return results.rows.map(row => new Match(
-      row.id,
+      new MatchId(row.id),
       new ConventionID(row.convention_id),
       new PlayerId(row.home_player_id),
       new PlayerId(row.away_player_id),
@@ -72,7 +76,7 @@ export class PostgresMatchRepository implements IMatchRepository {
     ));
   }
 
-  async findById(client: PoolClient, id: number): Promise<Match | null> {
+  async findById(client: PoolClient, id: MatchId): Promise<Match | null> {
     const result = await client.query(`
       SELECT
         id
@@ -86,7 +90,7 @@ export class PostgresMatchRepository implements IMatchRepository {
         matches
       WHERE
         id = $1
-    `, [ id ]);
+    `, [ id.toString() ]);
 
     // 取得数が1でない場合
     if (result.rowCount !== 1) {
@@ -94,7 +98,7 @@ export class PostgresMatchRepository implements IMatchRepository {
     }
 
     return new Match(
-      result.rows[0].id,
+      new MatchId(result.rows[0].id),
       new ConventionID(result.rows[0].convention_id),
       new PlayerId(result.rows[0].home_player_id),
       new PlayerId(result.rows[0].away_player_id),

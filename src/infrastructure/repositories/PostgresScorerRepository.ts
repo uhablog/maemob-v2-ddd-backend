@@ -8,6 +8,7 @@ import { ConventionID } from "../../domain/value-objects/conventionId";
 import { PlayerName } from "../../domain/value-objects/playerName";
 import { ScoreCount } from "../../domain/value-objects/scoreCount";
 import { PlayerId } from "../../domain/value-objects/playerId";
+import { MatchId } from "../../domain/value-objects/matchId";
 
 export class PostgresScorerRepository implements IScorerRepository {
 
@@ -30,13 +31,13 @@ export class PostgresScorerRepository implements IScorerRepository {
       );
     `, [
       scorer.id.toString(),
-      scorer.matchId,
+      scorer.matchId.toString(),
       scorer.playerId.toString(),
       scorer.name.value
     ]);
   };
 
-  async findByMatchId(matchId: number): Promise<Scorer[]> {
+  async findByMatchId(matchId: MatchId): Promise<Scorer[]> {
     const results = await this.db.query(`
       SELECT
         id
@@ -47,12 +48,12 @@ export class PostgresScorerRepository implements IScorerRepository {
         scorers
       WHERE
         match_id = $1
-    `, [ matchId ]);
+    `, [ matchId.toString() ]);
 
     return results.rows.map( row => new Scorer(
       new ScorerId(row.id),
       new ScorerName(row.name),
-      row.match_id,
+      new MatchId(row.match_id),
       new PlayerId(row.player_id)
     ));
   };

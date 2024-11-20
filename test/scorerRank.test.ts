@@ -27,7 +27,7 @@ const ERROR_MESSAGES = {
  * @param name 得点者
  * @returns リクエスト結果
  */
-const createScorer = async (conventionId: string, matchId: number, playerId: string, name: string) => {
+const createScorer = async (conventionId: string, matchId: string, playerId: string, name: string) => {
   return await request(app)
     .post(`/api/conventions/${conventionId}/matches/${matchId}/scorers`)
     .send({ player_id: playerId, name });
@@ -36,7 +36,7 @@ const createScorer = async (conventionId: string, matchId: number, playerId: str
 type TestData = {
   conventionId: string
   playerIds: string[]
-  matchIds: number[]
+  matchIds: string[]
 }
 /**
  * テストデータの作成
@@ -112,8 +112,8 @@ const createTestData = async (): Promise<TestData> => {
       player3Id
     ],
     matchIds: [
-      match1.body.id as number,
-      match2.body.id as number,
+      match1.body.id as string,
+      match2.body.id as string,
     ]
   }
 };

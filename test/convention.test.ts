@@ -1,15 +1,7 @@
 import request from 'supertest';
 import app from '../src/index';
-import { closeDatabase, resetDatabase } from "./setupDatabase";
+import { closeDatabase } from "./setupDatabase";
 import { getToday, getTomorrowDate } from './getDate';
-
-// beforeAll(async () => {
-//   await resetDatabase();
-// });
-
-// afterEach(async () => {
-//   await resetDatabase(); // 各テスト後にリセット
-// });
 
 afterAll(async () => {
   await closeDatabase(); // テスト終了後に接続を終了

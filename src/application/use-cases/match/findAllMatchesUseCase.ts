@@ -26,7 +26,7 @@ export class FindAllMatchesUseCase {
     try {
       const results = await this.matchRepository.findAll(client, conventionId);
       return results.map((result) => ({
-        id: result.id as number,
+        id: result.id.toString(),
         conventionId: result.conventionId.toString(),
         homePlayerId: result.homePlayerId.toString(),
         awayPlayerId: result.awayPlayerId.toString(),

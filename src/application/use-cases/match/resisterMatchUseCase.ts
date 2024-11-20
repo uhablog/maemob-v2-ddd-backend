@@ -8,6 +8,7 @@ import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { ConventionID } from "../../../domain/value-objects/conventionId";
 import { IConventionRepository } from "../../../domain/repositories/conventionRepository";
 import { PlayerId } from "../../../domain/value-objects/playerId";
+import { MatchId } from "../../../domain/value-objects/matchId";
 
 
 export class ResisterMatchUseCase {
@@ -35,7 +36,7 @@ export class ResisterMatchUseCase {
 
       // 登録用の試合エンティティ作成
       const resisterMatch = new Match(
-        null,
+        new MatchId(),
         conventionId,
         new PlayerId(match.homePlayerId),
         new PlayerId(match.awayPlayerId),

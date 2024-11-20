@@ -27,8 +27,18 @@ export class ScorerContoroller {
     const conventionId = req.params.convention_id;
     const matchId = req.params.match_id;
 
+    if (!isValidUUID(conventionId)) {
+      res.status(400).json({ message: "convention_idはUUID形式で指定して下さい。" });
+      return;
+    }
+
+    if (!isValidUUID(matchId)) {
+      res.status(400).json({ message: "match_idはUUID形式で指定して下さい。" });
+      return;
+    }
+
     try {
-      const results = await this.findScorerByMatchIdUseCase.execute(conventionId, Number(matchId));
+      const results = await this.findScorerByMatchIdUseCase.execute(conventionId, matchId);
       res.status(200).json(results);
     } catch (error) {
       console.error(error);
@@ -51,6 +61,7 @@ export class ScorerContoroller {
    */
   async resisterScorer(req: Request, res: Response) {
 
+    const { match_id, convention_id } = req.params;
     const { name, player_id } = req.body;
 
     if (name === undefined) {
@@ -63,6 +74,16 @@ export class ScorerContoroller {
       return;
     }
 
+    if (!isValidUUID(convention_id)) {
+      res.status(400).json({ message: "convention_idはUUID形式で指定して下さい。" });
+      return;
+    }
+
+    if (!isValidUUID(match_id)) {
+      res.status(400).json({ message: "match_idはUUID形式で指定して下さい。" });
+      return;
+    }
+
     if (!isValidUUID(player_id)) {
       res.status(400).json({ message: "player_idはUUID形式で指定して下さい。" });
       return;
@@ -72,15 +93,15 @@ export class ScorerContoroller {
       const scorerId = await this.resisterScorerUseCase.execute({
         name: name,
         player_id: player_id,
-        match_id: Number(req.params.match_id),
-        convention_id: req.params.convention_id
+        match_id: match_id,
+        convention_id: convention_id
       });
 
       res.status(201).json({
         id: scorerId,
         name: name,
         player_id: player_id,
-        match_id: Number(req.params.match_id)
+        match_id: match_id
       });
     } catch (error) {
       console.error(error);

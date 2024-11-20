@@ -25,9 +25,6 @@ export class Player {
   get id(): PlayerId {
     return this._id;
   }
-  // setId(id: PlayerId): void {
-  //   this._id = id;
-  // }
 
   get points(): Points {
     return this._points;

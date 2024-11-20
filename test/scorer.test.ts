@@ -254,7 +254,7 @@ describe('【異常系】POST /scorers 得点者の作成', () => {
 
   it('指定したmatch_idが存在しない場合404', async () => {
 
-    const testMatchId = '5000'
+    const testMatchId = uuidv4();
     const testData = await createPlayerAndConventionAndMatch();
     const response = await request(app)
       .post(`/api/conventions/${testData.conventionId}/matches/${testMatchId}/scorers`)
@@ -353,7 +353,7 @@ describe('【異常系】GET /scorers 得点者の取得', () => {
   });
   it('指定したmatch_idが存在しない場合404', async () => {
 
-    const testMatchId = '5000'
+    const testMatchId = uuidv4();
     const testData = await createPlayerAndConventionAndMatch();
     const response = await request(app)
       .get(`/api/conventions/${testData.conventionId}/matches/${testMatchId}/scorers`)

@@ -7,6 +7,7 @@ import matchRouter from './interfaces/http/routes/matchRouter';
 import conventionRouter from './interfaces/http/routes/conventionRouter';
 import scorerRouter from './interfaces/http/routes/scorerRouter';
 import assistRouter from './interfaces/http/routes/assistRouter';
+import momRouter from './interfaces/http/routes/momRouter';
 
 const app = express();
 app.use(express.json());
@@ -19,7 +20,8 @@ app.use('/api', [
   matchRouter,
   conventionRouter,
   scorerRouter,
-  assistRouter
+  assistRouter,
+  momRouter
 ]);
 
 const PORT = process.env.PORT || 3000;

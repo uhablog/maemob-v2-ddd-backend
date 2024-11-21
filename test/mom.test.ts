@@ -15,7 +15,7 @@ const ERROR_MESSAGES = {
   invalidConventionIdFormat: "convention_idはUUID形式で指定して下さい。",
   invalidMatchIdFormat: "match_idはUUID形式で指定して下さい。",
   noMatchedPlayer: "試合を行ったユーザーを指定して下さい。",
-  alreadyResistered: "すでにMOMは登録されています",
+  alreadyResistered: "すでにMOMは登録されています。",
 }
 
 /**
@@ -242,7 +242,7 @@ describe('【正常系】GET /mom MOMの取得', () => {
     
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty("id");
-    expect(response.body.match_id).toHaveProperty(testData.matchId);
+    expect(response.body.match_id).toBe(testData.matchId);
     expect(response.body.player_id).toBe(testData.playerIds[0]);
     expect(response.body.name).toBe("Leo Messi");
   });
@@ -292,6 +292,7 @@ describe('【異常系】GET /mom MOMの取得', () => {
     expect(response.body.message).toBe(`convention id: ${testUUID} not found`);
 
   });
+
   it('指定したmatch_idが存在しない場合404', async () => {
 
     const testMatchId = uuidv4();
@@ -302,6 +303,16 @@ describe('【異常系】GET /mom MOMの取得', () => {
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe(`match id: ${testMatchId} not found`);
+  });
+
+  it('指定した試合にMOMが未登録の場合404', async () => {
+    const testData = await createPlayerAndConventionAndMatch();
+    const response = await request(app)
+      .get(`/api/conventions/${testData.conventionId}/matches/${testData.matchId}/mom`)
+      .send();
+
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe(`MOM not found`);
   });
 
 });

@@ -55,3 +55,14 @@ CREATE TABLE assists (
   CONSTRAINT fk_assists_matches FOREIGN KEY (match_id)
     REFERENCES matches(id)
 );
+
+CREATE TABLE moms (
+  id UUID PRIMARY KEY,
+  match_id UUID NOT NULL,
+  player_id UUID NOT NULL,
+  name VARCHAR(50) NOT NULL,
+  CONSTRAINT fk_moms_players FOREIGN KEY (player_id)
+    REFERENCES players(id),
+  CONSTRAINT fk_moms_matches FOREIGN KEY (match_id)
+    REFERENCES matches(id)
+);

@@ -1,13 +1,13 @@
-import { AssistId } from "../value-objects/assistId";
-import { AssistName } from "../value-objects/assistName";
 import { MatchId } from "../value-objects/matchId";
+import { MomId } from "../value-objects/momId";
+import { MomName } from "../value-objects/momName";
 import { PlayerId } from "../value-objects/playerId";
 
-export class Assist {
+export class Mom {
 
   constructor(
-    public readonly id: AssistId,
-    public readonly name: AssistName,
+    public readonly id: MomId,
+    public readonly name: MomName,
     public readonly matchId: MatchId,
     public readonly playerId: PlayerId,
   ) {}

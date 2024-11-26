@@ -670,6 +670,56 @@
           }
         }
       }
+    },
+    "/api/mom": {
+      "get": {
+        "summary": "MOMランキングを取得",
+        "description": "クエリパラメータで大会・プレイヤーごとのランキングを取得可能",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "convention_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "query",
+            "name": "player_id",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "MOMランキングを取得",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MomRank"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Convention_id, player_idどちらか一つがUUID形式で指定されていない"
+          },
+          "404": {
+            "description": "指定した大会もしくはプレイヤーが存在しない"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -804,7 +854,7 @@
           "id": { "type": "string", "format": "uuid" },
           "player_id": { "type": "string", "format": "uuid" },
           "player_name": { "type": "string", "example": "player1"},
-          "name": { "type": "integer", "example": "Leo Messi" },
+          "name": { "type": "string", "example": "Leo Messi" },
           "scorer_count": { "type": "number", "minimum": 1, "example": 10 }
         }
       },
@@ -814,8 +864,18 @@
           "id": { "type": "string", "format": "uuid" },
           "player_id": { "type": "string", "format": "uuid" },
           "player_name": { "type": "string", "example": "player1"},
-          "name": { "type": "integer", "example": "Iniesta" },
+          "name": { "type": "string", "example": "Iniesta" },
           "assist_count": { "type": "number", "minimum": 1, "example": 10 }
+        }
+      },
+      "MomRank": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "player_id": { "type": "string", "format": "uuid" },
+          "player_name": { "type": "string", "example": "player1"},
+          "name": { "type": "string", "example": "Iniesta" },
+          "mom_count": { "type": "number", "minimum": 1, "example": 10 }
         }
       }
     }

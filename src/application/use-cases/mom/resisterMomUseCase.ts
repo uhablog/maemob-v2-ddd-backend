@@ -21,6 +21,13 @@ export class ResisterMomUseCase {
     private readonly db: Pool
   ) {};
 
+  /**
+   * MOMの登録を行う
+   * @param data 登録するMOMデータ
+   * @returns 登録したID
+   * @throws { NotFoundError } 指定された大会もしくは試合が存在しない場合に発生
+   * @throws { BadRequestError } 指定された試合を実施したプレイヤー以外が指定された場合もしくは既にMOMが登録済みの場合に発生
+   */
   async execute(data: ResisterMomDTO): Promise<string> {
 
     // 大会の存在確認

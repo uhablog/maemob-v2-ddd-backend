@@ -388,7 +388,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewScorer"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/NewScorer"
+                }
               }
             }
           },
@@ -400,7 +403,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Scorer"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Scorer"
+                  }
                 }
               }
             }

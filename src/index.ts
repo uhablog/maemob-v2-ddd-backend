@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import * as swaggerDocument from './openapi.json';
 
@@ -11,6 +12,13 @@ import momRouter from './interfaces/http/routes/momRouter';
 
 const app = express();
 app.use(express.json());
+
+// CORSの設定
+app.use(cors({
+  origin: '*',  // 必要に応じて特定のオリジンに制限することも可能
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],  // 必要なHTTPメソッドを指定
+  allowedHeaders: ['Content-Type', 'Authorization']  // 必要なヘッダーを指定
+}));
 
 // Swagger UIをセットアップ
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

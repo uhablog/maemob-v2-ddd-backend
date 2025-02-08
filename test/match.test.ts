@@ -12,6 +12,7 @@ const ERROR_MESSAGES = {
   invalidScore: "スコアは0以上で指定して下さい。",
   invalidConventionIdFormat: "convention idはUUID形式で指定して下さい",
   invalidRequestBody: "全てのプロパティを指定して下さい。",
+  invalidMatchIdFormat: "idはUUID形式で指定して下さい",
 }
 
 beforeAll(async () => {
@@ -292,5 +293,61 @@ describe('【異常系】GET /matches 試合の取得', () => {
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe(`convention id: ${testUUID} not found`);
+  });
+});
+
+describe('【正常系】試合の取得(ID指定)', () => {
+
+  it('【正常系】GET /match/{id} - 指定したIDの試合が取得できる', async () => {
+
+    const responseCreate = await request(app)
+      .post(`/api/conventions/${createdConventionId}/matches`)
+      .send({
+        homePlayerId: createdPlayerIds[0],
+        awayPlayerId: createdPlayerIds[1],
+        homeScore: 1,
+        awayScore: 0
+      });
+
+    const response = await request(app)
+      .get(`/api/conventions/${createdConventionId}/match/${responseCreate.body.id}`)
+      .send();
+
+    expect(response.status).toBe(200);
+    expect(response.body.homePlayerId).toBe(createdPlayerIds[0]);
+    expect(response.body.awayPlayerId).toBe(createdPlayerIds[1]);
+    expect(response.body.homeScore).toBe(1);
+    expect(response.body.awayScore).toBe(0);
+  });
+});
+
+describe('【異常系】試合の取得(ID指定)', () => {
+  it('指定したIDの試合がない', async () => {
+
+    const testMatchId = uuidv4();
+    const response = await request(app)
+      .get(`/api/conventions/${createdConventionId}/match/${testMatchId}`)
+      .send();
+
+    expect(response.status).toBe(404);
+    expect(response.body.message).toBe(`match id ${testMatchId} not found`);
+  });
+
+  it('IDの指定が不適切(string)', async () => {
+    const response = await request(app)
+      .get(`/api/conventions/${createdConventionId}/match/string`)
+      .send();
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidMatchIdFormat);
+  });
+
+  it('IDの指定が不適切(0)', async () => {
+    const response = await request(app)
+      .get(`/api/conventions/${createdConventionId}/match/0`)
+      .send();
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidMatchIdFormat);
   });
 });

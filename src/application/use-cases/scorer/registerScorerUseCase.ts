@@ -49,8 +49,6 @@ export class RegisterScorerUseCase {
 
     const checkOverScoreResult = await this.checkOverScore(data, match);
 
-    console.log(checkOverScoreResult);
-
     if (!checkOverScoreResult['home']) {
       throw new BadRequestError(`ホームチームの得点者数がホームチームの得点数より多く指定されています。`);
     } else if (!checkOverScoreResult['away']) {
@@ -60,29 +58,28 @@ export class RegisterScorerUseCase {
     try {
       await client.query("BEGIN");
 
-      const scorerIds = await Promise.all(
-        data.map(async (scorer) => {
+      const scorerIds: string[] = [];
+      for (const scorer of data) {
 
-          // スコアラーのプレイヤーIDは試合のホームかアウェイのプレイヤーでなければおかしい
-          if (match.homePlayerId.toString() !== scorer.player_id && match.awayPlayerId.toString() !== scorer.player_id) {
-            throw new BadRequestError('試合を行ったユーザーを指定して下さい。');
-          }
+        // スコアラーのプレイヤーIDは試合のホームかアウェイのプレイヤーでなければおかしい
+        if (match.homePlayerId.toString() !== scorer.player_id && match.awayPlayerId.toString() !== scorer.player_id) {
+          throw new BadRequestError('試合を行ったユーザーを指定して下さい。');
+        }
 
-          // 作成するスコアラーのID
-          const scorerId = new ScorerId();
+        // 作成するスコアラーのID
+        const scorerId = new ScorerId();
 
-          const newScorer = new Scorer(
-            scorerId,
-            new ScorerName(scorer.name),
-            matchIdObject,
-            new PlayerId(scorer.player_id)
-          );
+        const newScorer = new Scorer(
+          scorerId,
+          new ScorerName(scorer.name),
+          matchIdObject,
+          new PlayerId(scorer.player_id)
+        );
 
-          await this.scorerRepository.save(newScorer);
-          return scorerId.toString();
-        })
-      )
-
+        await this.scorerRepository.save(newScorer);
+        scorerIds.push(scorerId.toString());
+      }
+      await client.query("COMMIT");
       return scorerIds;
 
     } catch (error) {

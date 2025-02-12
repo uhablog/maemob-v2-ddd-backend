@@ -494,7 +494,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewAssist"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/NewAssist"
+                }
               }
             }
           },
@@ -506,7 +509,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Assist"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Assist"
+                  }
                 }
               }
             }

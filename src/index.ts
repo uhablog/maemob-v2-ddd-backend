@@ -9,6 +9,7 @@ import conventionRouter from './interfaces/http/routes/conventionRouter';
 import scorerRouter from './interfaces/http/routes/scorerRouter';
 import assistRouter from './interfaces/http/routes/assistRouter';
 import momRouter from './interfaces/http/routes/momRouter';
+import http from 'http';
 
 const app = express();
 app.use(express.json());
@@ -34,11 +35,13 @@ app.use('/api', [
 
 const PORT = process.env.PORT || 3000;
 
+let server: http.Server | undefined;
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
+  server = app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
     console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
   });
 }
 
-export default app;
+// export default app;
+export { app, server };

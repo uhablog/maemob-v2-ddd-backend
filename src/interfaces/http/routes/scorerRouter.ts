@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { FindScorerByMatchIdUseCase } from "../../../application/use-cases/scorer/findScorerByMatchIdUseCase";
-import { ResisterScorerUseCase } from "../../../application/use-cases/scorer/resisterScorerUseCase";
+import { RegisterScorerUseCase } from "../../../application/use-cases/scorer/registerScorerUseCase";
 import pool from "../../../config/db";
 import { PostgresConventionRepository } from "../../../infrastructure/repositories/PostgresConventionRepository";
 import { PostgresMatchRepository } from "../../../infrastructure/repositories/PostgresMatchRepository";
@@ -16,13 +16,13 @@ const socrerRepository = new PostgresScorerRepository(pool);
 const playerRepository = new PostgresPlayerRepository();
 
 const findScorerByMatchIdUseCase = new FindScorerByMatchIdUseCase(socrerRepository, matchRepository, conventionRepository, pool);
-const resisterScorerUseCase = new ResisterScorerUseCase(socrerRepository, matchRepository, conventionRepository, pool);
+const registerScorerUseCase = new RegisterScorerUseCase(socrerRepository, matchRepository, conventionRepository, pool);
 const findScorerRankingByConventionIdUseCase = new FindScorerRankingByConventionIdUseCase(socrerRepository, conventionRepository);
 const findScorerRankingByPlayerIdUseCase = new FindScorerRankingByPlayerIdUseCase(socrerRepository, playerRepository, pool);
 
 const scorerController = new ScorerContoroller(
   findScorerByMatchIdUseCase,
-  resisterScorerUseCase,
+  registerScorerUseCase,
   findScorerRankingByConventionIdUseCase,
   findScorerRankingByPlayerIdUseCase
 );
@@ -33,7 +33,7 @@ const router = Router();
  * 大会・試合に関するスコアの取得・追加
  */
 router.get(`/conventions/:convention_id/matches/:match_id/scorers`, (req, res) => scorerController.findScorer(req, res));
-router.post(`/conventions/:convention_id/matches/:match_id/scorers`, (req, res) => scorerController.resisterScorer(req, res));
+router.post(`/conventions/:convention_id/matches/:match_id/scorers`, (req, res) => scorerController.registerScorer(req, res));
 
 /**
  * 得点ランキングの取得

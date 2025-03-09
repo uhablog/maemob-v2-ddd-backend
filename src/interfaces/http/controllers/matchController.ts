@@ -3,10 +3,12 @@ import { FindAllMatchesUseCase } from "../../../application/use-cases/match/find
 import { ResisterMatchUseCase } from "../../../application/use-cases/match/resisterMatchUseCase";
 import { isValidUUID } from "../../../shared/common/ValidUUID";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
+import { FindMatchByIdUseCase } from "../../../application/use-cases/match/findMatchByIdUseCase";
 
 export class MatchController {
   constructor(
     private readonly findAllMatchUseCase: FindAllMatchesUseCase,
+    private readonly findMatchByIdUseCase: FindMatchByIdUseCase,
     private readonly resisterMatchUseCase: ResisterMatchUseCase
   ) {}
 
@@ -32,6 +34,31 @@ export class MatchController {
       } else {
         res.status(500).json({
           message: "Internal Server Error"
+        });
+      }
+    }
+  }
+
+  async findById(req: Request, res: Response) {
+
+    const matchId = req.params.match_id;
+
+    if (!isValidUUID(matchId)) {
+      res.status(400).json({
+        message: "idはUUID形式で指定して下さい"
+      });
+      return;
+    }
+
+    try {
+      const match = await this.findMatchByIdUseCase.execute(matchId);
+      res.status(200).json({...match});
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.status(error.statusCode).json({ message: error.message });
+      } else {
+        res.status(500).json({
+          message: (error as Error).message
         });
       }
     }

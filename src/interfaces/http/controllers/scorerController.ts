@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 
 import { FindScorerByMatchIdUseCase } from "../../../application/use-cases/scorer/findScorerByMatchIdUseCase";
-import { ResisterScorerUseCase } from "../../../application/use-cases/scorer/resisterScorerUseCase";
+import { RegisterScorerUseCase } from "../../../application/use-cases/scorer/registerScorerUseCase";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { BadRequestError } from "../../../shared/errors/BadRequest";
 import { isValidUUID } from "../../../shared/common/ValidUUID";
@@ -12,7 +12,7 @@ export class ScorerContoroller {
 
   constructor(
     private readonly findScorerByMatchIdUseCase: FindScorerByMatchIdUseCase,
-    private readonly resisterScorerUseCase: ResisterScorerUseCase,
+    private readonly registerScorerUseCase: RegisterScorerUseCase,
     private readonly findScorerRankingByConventionIdUseCase: FindScorerRankingByConventionIdUseCase,
     private readonly findScorerRankingByPlayerIdUseCase: FindScorerRankingByPlayerIdUseCase,
   ) {}
@@ -59,50 +59,55 @@ export class ScorerContoroller {
    * @param res 
    * @returns HTTP レスポンスの返却
    */
-  async resisterScorer(req: Request, res: Response) {
+  async registerScorer(req: Request, res: Response) {
 
     const { match_id, convention_id } = req.params;
-    const { name, player_id } = req.body;
+    const scorers = req.body;
 
-    if (name === undefined) {
-      res.status(400).json({ message: "nameは入力必須です。" });
+    const errors: string[] = [];
+
+    if (!Array.isArray(scorers)) {
+      res.status(400).json({ message: "得点者は配列で指定してください。"});
       return;
     }
 
-    if (player_id === undefined) {
-      res.status(400).json({ message: "player_idは入力必須です。" });
-      return;
-    }
+    // 各得点者のバリデーション
+    scorers.forEach((scorer, index) => {
+      if (!scorer.name) {
+        errors.push(`得点者[${index}]のnameは必須です。`);
+      }
+      if (!scorer.player_id) {
+        errors.push(`得点者[${index}]のplayer_idは必須です。`);
+      }
+      if (scorer.player_id && !isValidUUID(scorer.player_id)) {
+        errors.push(`得点者[${index}]のplayer_idはUUID形式で指定してください。`);
+      }
+    });
 
     if (!isValidUUID(convention_id)) {
-      res.status(400).json({ message: "convention_idはUUID形式で指定して下さい。" });
-      return;
+      errors.push("convention_idはUUID形式で指定してください。");
     }
 
     if (!isValidUUID(match_id)) {
-      res.status(400).json({ message: "match_idはUUID形式で指定して下さい。" });
-      return;
+      errors.push("match_idはUUID形式で指定してください。");
     }
 
-    if (!isValidUUID(player_id)) {
-      res.status(400).json({ message: "player_idはUUID形式で指定して下さい。" });
+    if (errors.length > 0) {
+      res.status(400).json({errors});
       return;
     }
 
     try {
-      const scorerId = await this.resisterScorerUseCase.execute({
-        name: name,
-        player_id: player_id,
-        match_id: match_id,
-        convention_id: convention_id
-      });
+      const scorerIds = await this.registerScorerUseCase.execute(scorers, match_id, convention_id);
 
-      res.status(201).json({
-        id: scorerId,
-        name: name,
-        player_id: player_id,
-        match_id: match_id
-      });
+      res.status(201).json(
+        scorerIds.map( (scorerId, index) => ({
+          id: scorerId,
+          name: scorers[index].name,
+          player_id: scorers[index].player_id,
+          match_id: match_id
+        }))
+      );
     } catch (error) {
       console.error(error);
 

@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../src/index';  // エントリーポイント
+import {app} from '../src/index';  // エントリーポイント
 import { closeDatabase } from './setupDatabase';
 
 import { v4 as uuidv4 } from 'uuid';

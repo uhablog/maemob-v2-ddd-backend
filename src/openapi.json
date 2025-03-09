@@ -271,6 +271,52 @@
         }
       }
     },
+    "/api/conventions/{convention_id}/match/{match_id}": {
+      "get": {
+        "summary": "試合の取得",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "match_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "試合の詳細",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Match"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "IDの指定がUUID形式ではない"
+          },
+          "404": {
+            "description": "該当するIDの試合が存在しない"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/conventions/{convention_id}/matches/{match_id}/scorers": {
       "get": {
         "summary": "試合の得点者の一覧を取得",
@@ -342,7 +388,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewScorer"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/NewScorer"
+                }
               }
             }
           },
@@ -354,7 +403,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Scorer"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Scorer"
+                  }
                 }
               }
             }
@@ -442,7 +494,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewAssist"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/NewAssist"
+                }
               }
             }
           },
@@ -454,7 +509,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Assist"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Assist"
+                  }
                 }
               }
             }
@@ -770,7 +828,7 @@
           "awayPlayerId": { "type": "string", "format": "uuid" },
           "homeScore": { "type": "integer", "example": 2 },
           "awayScore": { "type": "integer", "example": 1 },
-          "match_date": { "type": "string", "format": "date-time" }
+          "matchDate": { "type": "string", "format": "date-time" }
         }
       },
       "NewMatch": {

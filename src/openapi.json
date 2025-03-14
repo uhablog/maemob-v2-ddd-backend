@@ -6,6 +6,43 @@
     "description": "サッカーゲームのリーグ管理用API"
   },
   "paths": {
+    "/api/convention/{convention_id}": {
+      "get": {
+        "summary": "大会の取得",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "大会の取得が成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schema/Convention"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "convention_idの指定がUUID形式ではない"
+          },
+          "404": {
+            "description": "該当するconvention_idの大会が存在しない"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/conventions": {
       "get": {
         "summary": "大会一覧の取得",

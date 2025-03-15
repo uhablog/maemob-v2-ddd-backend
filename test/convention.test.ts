@@ -2,6 +2,7 @@ import request from 'supertest';
 import {app} from '../src/index';
 import { closeDatabase } from "./setupDatabase";
 import { getToday, getTomorrowDate } from './getDate';
+import { v4 as uuidv4 } from 'uuid';
 
 afterAll(async () => {
   await closeDatabase(); // テスト終了後に接続を終了
@@ -93,5 +94,45 @@ describe('【正常系】大会の取得', () => {
     expect(getConventoinResponse.body.length).toBeGreaterThanOrEqual(3);
     expect(getConventoinResponse.body[0]).toHaveProperty("name");
     expect(getConventoinResponse.body[0]).toHaveProperty("held_date");
+  });
+});
+
+describe("【正常系】大会の取得(ID指定)", () => {
+
+  it("作成した試合が取得できる", async () => {
+
+    // 取得用の大会を作成
+    const createdConvention = await request(app)
+      .post(`/api/conventions`)
+      .send({
+        name: "League1",
+        held_date: getTomorrowDate()
+      });
+
+    const response = await request(app)
+      .get(`/api/convention/${createdConvention.body.id}`)
+      .send();
+    
+    expect(response.status).toBe(200);
+    expect(response.body.id).toBe(createdConvention.body.id);
+    expect(response.body.name).toBe(createdConvention.body.name);
+  });
+});
+
+describe("【異常系】大会の取得(ID指定)", () => {
+
+  it("指定したIDの大会がない", async () => {
+    const testConventionId = uuidv4();
+    const response = await request(app)
+      .get(`/api/convention/${testConventionId}`)
+      .send();
+    expect(response.status).toBe(404);
+  });
+
+  it("IDの指定がuuid形式ではない", async () => {
+    const response = await request(app)
+      .get(`/api/convention/string`)
+      .send();
+    expect(response.status).toBe(400);
   });
 });

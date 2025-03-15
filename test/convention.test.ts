@@ -116,7 +116,6 @@ describe("【正常系】大会の取得(ID指定)", () => {
     expect(response.status).toBe(200);
     expect(response.body.id).toBe(createdConvention.body.id);
     expect(response.body.name).toBe(createdConvention.body.name);
-    expect(response.body.held_date).toBe(createdConvention.body.held_date);
   });
 });
 

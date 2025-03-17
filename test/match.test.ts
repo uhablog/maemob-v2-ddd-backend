@@ -305,19 +305,102 @@ describe('【正常系】試合の取得(ID指定)', () => {
       .send({
         homePlayerId: createdPlayerIds[0],
         awayPlayerId: createdPlayerIds[1],
-        homeScore: 1,
-        awayScore: 0
+        homeScore: 4,
+        awayScore: 3
       });
 
+    const createdMatchId = responseCreate.body.id;
+
+    // 試合の得点者を登録
+    const responseCreateScorers = await request(app)
+      .post(`/api/conventions/${createdConventionId}/matches/${createdMatchId}/scorers`)
+      .send([
+        {
+          player_id: createdPlayerIds[0],
+          name: "Leo Messi"
+        },
+        {
+          player_id: createdPlayerIds[0],
+          name: "Leo Messi"
+        },
+        {
+          player_id: createdPlayerIds[0],
+          name: "Leo Messi"
+        },
+        {
+          player_id: createdPlayerIds[0],
+          name: "Leo Messi"
+        },
+        {
+          player_id: createdPlayerIds[1],
+          name: "CR7"
+        },
+        {
+          player_id: createdPlayerIds[1],
+          name: "CR7"
+        },
+        {
+          player_id: createdPlayerIds[1],
+          name: "CR7"
+        }
+      ]);
+
+    // 試合のアシストを登録
+    const responseCreateAssists = await request(app)
+      .post(`/api/conventions/${createdConventionId}/matches/${createdMatchId}/assists`)
+      .send([
+        {
+          player_id: createdPlayerIds[0],
+          name: "Iniesta"
+        },
+        {
+          player_id: createdPlayerIds[0],
+          name: "Xavi"
+        },
+        {
+          player_id: createdPlayerIds[1],
+          name: "Kroos"
+        },
+        {
+          player_id: createdPlayerIds[1],
+          name: "Kroos"
+        },
+        {
+          player_id: createdPlayerIds[1],
+          name: "Kroos"
+        }
+      ]);
+    
+    // 試合のMOMを登録
+    const responseCreateMom = await request(app)
+      .post(`/api/conventions/${createdConventionId}/matches/${createdMatchId}/mom`)
+      .send({
+        player_id: createdPlayerIds[0],
+        name: "Leo Messi"
+      });
+
+    
     const response = await request(app)
-      .get(`/api/conventions/${createdConventionId}/match/${responseCreate.body.id}`)
+      .get(`/api/conventions/${createdConventionId}/match/${createdMatchId}`)
       .send();
 
     expect(response.status).toBe(200);
     expect(response.body.homePlayerId).toBe(createdPlayerIds[0]);
     expect(response.body.awayPlayerId).toBe(createdPlayerIds[1]);
-    expect(response.body.homeScore).toBe(1);
-    expect(response.body.awayScore).toBe(0);
+    expect(response.body.homeScore).toBe(4);
+    expect(response.body.awayScore).toBe(3);
+    expect(response.body.homePlayerName).toBe("Taro");
+    expect(response.body.awayPlayerName).toBe("Hanako");
+    expect(response.body.mom).toBe("Leo Messi");
+    expect(response.body.homeScorers.length).toBe(4);
+    expect(response.body.homeScorers[0].name).toBe("Leo Messi");
+    expect(response.body.homeAssists.length).toBe(3);
+    expect(response.body.homeAssists[0].name).toBe("Iniesta");
+    expect(response.body.awayScorers.length).toBe(3);
+    expect(response.body.awayScorers[0].name).toBe("CR7");
+    expect(response.body.awayAssists.length).toBe(3);
+    expect(response.body.awayAssists[0].name).toBe("Kroos");
+
   });
 });
 

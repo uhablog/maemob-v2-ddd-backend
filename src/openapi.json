@@ -337,7 +337,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Match"
+                  "$ref": "#/components/schemas/MatchDetail"
                 }
               }
             }
@@ -866,6 +866,56 @@
           "homeScore": { "type": "integer", "example": 2 },
           "awayScore": { "type": "integer", "example": 1 },
           "matchDate": { "type": "string", "format": "date-time" }
+        }
+      },
+      "MatchDetail": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "homePlayerId": { "type": "string", "format": "uuid" },
+          "homePlayerName": { "type": "string" },
+          "awayPlayerId": { "type": "string", "format": "uuid" },
+          "awayPlayerName": { "type": "string" },
+          "homeScore": { "type": "integer", "example": 2 },
+          "awayScore": { "type": "integer", "example": 1 },
+          "matchDate": { "type": "string", "format": "date-time" },
+          "mom": { "type": "string" },
+          "homeScorers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string", "example": "Leo Messi" }
+              }
+            }
+          },
+          "homeAssists": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string", "example": "Leo Messi" }
+              }
+            }
+          },
+          "awayScorers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string", "example": "Leo Messi" }
+              }
+            }
+          },
+          "awayAssists": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string", "example": "Leo Messi" }
+              }
+            }
+          }
         }
       },
       "NewMatch": {

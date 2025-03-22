@@ -24,6 +24,12 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']  // 必要なヘッダーを指定
 }));
 
+// Swagger UIをセットアップ
+if (process.env.NODE_ENV !== 'production') {
+  console.log('Swagger UI Setup');
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+}
+
 // 認可用のコードを追加
 const authConfig = {
   domain: process.env.AUTH0_DOMAIN!,
@@ -47,16 +53,18 @@ checkJwt.unless = unless;
 if (process.env.NODE_ENV !== 'test') {
 
   // Swagger UIからのリクエストの場合は認可をしない
-  app.use(checkJwt.unless((req) => {
-    const referer = req.headers.referer || '';
-    return referer.includes('/api-docs');
+  app.use(checkJwt.unless({
+    path: [
+      '/api-docs/',
+      '/api-docs/*',
+    ],
+    custom: (req) => {
+      const referer = req.headers.referer || '';
+      return referer.includes('/api-docs');
+    }
   }));
 }
 
-// Swagger UIをセットアップ
-if (process.env.NODE_ENV !== 'production') {
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-}
 
 app.use('/api', [
   playerRouter,

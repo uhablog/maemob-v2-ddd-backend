@@ -3,12 +3,16 @@ import { FindAllConventionsUseCase } from "../../../application/use-cases/conven
 import { ResisterConventionUseCase } from "../../../application/use-cases/convention/resisterConventionUseCase";
 import { isValidDate } from "../../../shared/common/validDate";
 import { getToday } from "../../../shared/common/getDate";
+import { FindConventionByIdUseCase } from "../../../application/use-cases/convention/findConventionByIdUseCase";
+import { isValidUUID } from "../../../shared/common/ValidUUID";
+import { NotFoundError } from "../../../shared/errors/NotFoundError";
 
 export class ConventionController {
 
   constructor(
     private readonly findAllConventionUseCase: FindAllConventionsUseCase,
-    private readonly resisterConventionUseCase: ResisterConventionUseCase
+    private readonly resisterConventionUseCase: ResisterConventionUseCase,
+    private readonly findConventionByIdUseCase: FindConventionByIdUseCase,
   ) {};
 
   async findAll(req: Request, res: Response) {
@@ -60,5 +64,32 @@ export class ConventionController {
       });
     }
   };
+
+  async findById(req: Request, res: Response) {
+    const conventionId = req.params.convention_id;
+    console.log(`convention id: ${conventionId}`);
+
+    if (!isValidUUID(conventionId)) {
+      res.status(400).json({
+        message: "convention_idはUUID形式で指定してください。",
+      });
+      return;
+    }
+
+    try {
+      const convention = await this.findConventionByIdUseCase.execute(conventionId);
+      res.status(200).json({...convention});
+      return;
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        res.status(error.statusCode).json({ message: error.message });
+        return;
+      } else {
+        res.status(500).json({
+          message: (error as Error).message
+        });
+      }
+    }
+  }
 
 };

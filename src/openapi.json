@@ -5,10 +5,54 @@
     "version": "1.0.0",
     "description": "サッカーゲームのリーグ管理用API"
   },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "paths": {
+    "/api/convention/{convention_id}": {
+      "get": {
+        "summary": "大会の取得",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "大会の取得が成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Convention"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "convention_idの指定がUUID形式ではない"
+          },
+          "404": {
+            "description": "該当するconvention_idの大会が存在しない"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/conventions": {
       "get": {
         "summary": "大会一覧の取得",
+        "security": [{"bearerAuth": []}],
         "responses": {
           "200": {
             "description": "大会一覧の取得",
@@ -30,6 +74,7 @@
       },
       "post": {
         "summary": "大会の登録",
+        "security": [{"bearerAuth": []}],
         "requestBody": {
           "content": {
             "application/json": {
@@ -63,6 +108,7 @@
     "/api/conventions/{convention_id}/players": {
       "get": {
         "summary": "プレイヤー一覧の取得",
+        "security": [{"bearerAuth": []}],
         "description": "大会参加プレイヤーを勝ち点順で取得",
         "parameters": [
           {
@@ -99,6 +145,7 @@
       },
       "post": {
         "summary": "プレイヤーの登録",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -146,6 +193,7 @@
     "/api/conventions/{convention_id}/player/{id}": {
       "get": {
         "summary": "プレイヤーの取得",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -192,6 +240,7 @@
     "/api/conventions/{convention_id}/matches": {
       "get": {
         "summary": "試合一覧の取得",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -227,6 +276,7 @@
       },
       "post": {
         "summary": "試合結果の登録",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -271,9 +321,57 @@
         }
       }
     },
+    "/api/conventions/{convention_id}/match/{match_id}": {
+      "get": {
+        "summary": "試合の取得",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "convention_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "in": "path",
+            "name": "match_id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "試合の詳細",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Match"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "IDの指定がUUID形式ではない"
+          },
+          "404": {
+            "description": "該当するIDの試合が存在しない"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/conventions/{convention_id}/matches/{match_id}/scorers": {
       "get": {
         "summary": "試合の得点者の一覧を取得",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -318,6 +416,7 @@
       },
       "post": {
         "summary": "得点者の登録",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -342,7 +441,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewScorer"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/NewScorer"
+                }
               }
             }
           },
@@ -354,7 +456,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Scorer"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Scorer"
+                  }
                 }
               }
             }
@@ -374,6 +479,7 @@
     "/api/conventions/{convention_id}/matches/{match_id}/assists": {
       "get": {
         "summary": "試合のアシストの一覧を取得",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -418,6 +524,7 @@
       },
       "post": {
         "summary": "アシストの登録",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -442,7 +549,10 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewAssist"
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/NewAssist"
+                }
               }
             }
           },
@@ -454,7 +564,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Assist"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Assist"
+                  }
                 }
               }
             }
@@ -474,6 +587,7 @@
     "/api/conventions/{convention_id}/matches/{match_id}/mom": {
       "get": {
         "summary": "試合のMOMを取得",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -518,6 +632,7 @@
       },
       "post": {
         "summary": "MOMの登録",
+        "security": [{"bearerAuth": []}],
         "parameters": [
           {
             "in": "path",
@@ -574,6 +689,7 @@
     "/api/scorers": {
       "get": {
         "summary": "得点ランキングを取得",
+        "security": [{"bearerAuth": []}],
         "description": "クエリパラメータで大会・プレイヤーごとのランキングを取得可能",
         "parameters": [
           {
@@ -624,6 +740,7 @@
     "/api/assists": {
       "get": {
         "summary": "アシストランキングを取得",
+        "security": [{"bearerAuth": []}],
         "description": "クエリパラメータで大会・プレイヤーごとのランキングを取得可能",
         "parameters": [
           {
@@ -674,6 +791,7 @@
     "/api/mom": {
       "get": {
         "summary": "MOMランキングを取得",
+        "security": [{"bearerAuth": []}],
         "description": "クエリパラメータで大会・プレイヤーごとのランキングを取得可能",
         "parameters": [
           {
@@ -723,6 +841,13 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
     "schemas": {
       "Convention": {
         "type": "object",
@@ -770,7 +895,7 @@
           "awayPlayerId": { "type": "string", "format": "uuid" },
           "homeScore": { "type": "integer", "example": 2 },
           "awayScore": { "type": "integer", "example": 1 },
-          "match_date": { "type": "string", "format": "date-time" }
+          "matchDate": { "type": "string", "format": "date-time" }
         }
       },
       "NewMatch": {

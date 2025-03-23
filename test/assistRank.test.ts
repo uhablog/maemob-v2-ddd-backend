@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { v4 as uuidv4 } from 'uuid';
 
-import app from "../src";
+import { app, server } from '../src/index';
 import { closeDatabase } from "./setupDatabase";
 
 let testData: TestData;
@@ -30,7 +30,7 @@ const ERROR_MESSAGES = {
 const createAssist = async (conventionId: string, matchId: string, playerId: string, name: string) => {
   return await request(app)
     .post(`/api/conventions/${conventionId}/matches/${matchId}/assists`)
-    .send({ player_id: playerId, name });
+    .send([{ player_id: playerId, name }]);
 };
 
 type TestData = {

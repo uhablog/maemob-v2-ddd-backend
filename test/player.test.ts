@@ -10,6 +10,7 @@ afterAll(async () => {
 
 const ERROR_MESSAGES = {
   noname: "nameは必須です",
+  noauth0userid: "auth0UserIdは必須です",
   invalidConventionIdFormat: "convention idはUUID形式で指定して下さい",
   invalidPlayerIdFormat: "idはUUID形式で指定して下さい",
 }
@@ -27,7 +28,7 @@ describe('【正常系】プレイヤーの作成', () => {
 
     const response = await request(app)
       .post(`/api/conventions/${createdConventionId}/players`)
-      .send({ name: 'Taro' });
+      .send({ name: 'Taro', auth0UserId: "userid" });
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('id');
@@ -38,6 +39,7 @@ describe('【正常系】プレイヤーの作成', () => {
     expect(response.body.losses).toBe(0);
     expect(response.body.goals).toBe(0);
     expect(response.body.concede).toBe(0);
+    expect(response.body.auth0UserId).toBe("userid");
   });
 
 });
@@ -52,10 +54,24 @@ describe('【異常系】POST /players - プレイヤーの作成', () => {
 
     const response = await request(app)
       .post(`/api/conventions/${createdConventionId}/players`)
-      .send({});
+      .send({ auth0UserId: "userid" });
 
     expect(response.status).toBe(400);
     expect(response.body.message).toBe(ERROR_MESSAGES.noname);
+  });
+
+  it("Auth0ユーザーIDのリクエストがない場合は400エラーが返ってくることの確認", async () => {
+    const responseConvention = await request(app)
+      .post('/api/conventions')
+      .send({ name: "post player test League1", held_date: "2024-10-25" });
+    const createdConventionId = responseConvention.body.id;
+
+    const response = await request(app)
+      .post(`/api/conventions/${createdConventionId}/players`)
+      .send({ name: "username" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(ERROR_MESSAGES.noauth0userid);
   });
 
   it("convention idがUUID形式ではないと400エラー", async () => {
@@ -92,13 +108,13 @@ describe('【正常系】プレイヤーの取得', () => {
     // プレイヤー作成
     const responsePostTaro = await request(app)
       .post(`/api/conventions/${createdConventionId}/players`)
-      .send({ name: 'Taro' });
+      .send({ name: 'Taro', auth0UserId: "usertaro" });
     const responsePostHanako = await request(app)
       .post(`/api/conventions/${createdConventionId}/players`)
-      .send({ name: 'Hanako' });
+      .send({ name: 'Hanako', auth0UserId: "userhanako" });
     const responsePostSaburo = await request(app)
       .post(`/api/conventions/${createdConventionId}/players`)
-      .send({ name: 'Saburo' });
+      .send({ name: 'Saburo', auth0UserId: "usersaburo" });
 
     /**
      * 試合結果を登録して勝ち点順に取得できるかチェックする
@@ -151,6 +167,7 @@ describe('【正常系】プレイヤーの取得', () => {
     expect(response.body[0].losses).toBe(0);
     expect(response.body[0].goals).toBe(5);
     expect(response.body[0].concede).toBe(3);
+    expect(response.body[0].auth0UserId).toBe("usertaro");
 
     expect(response.body[1].name).toBe('Hanako');
     expect(response.body[1].points).toBe(4);
@@ -159,6 +176,7 @@ describe('【正常系】プレイヤーの取得', () => {
     expect(response.body[1].losses).toBe(1);
     expect(response.body[1].goals).toBe(5);
     expect(response.body[1].concede).toBe(4);
+    expect(response.body[0].auth0UserId).toBe("userhanako");
 
     expect(response.body[2].name).toBe('Saburo');
     expect(response.body[2].points).toBe(0);
@@ -167,6 +185,7 @@ describe('【正常系】プレイヤーの取得', () => {
     expect(response.body[2].losses).toBe(2);
     expect(response.body[2].goals).toBe(2);
     expect(response.body[2].concede).toBe(5);
+    expect(response.body[0].auth0UserId).toBe("usersaburo");
   });
 
 });
@@ -183,7 +202,7 @@ describe('【正常系】プレイヤーの取得(ID指定)', () => {
 
     const responsePostTaro = await request(app)
       .post(`/api/conventions/${createdConventionId}/players`)
-      .send({ name: 'Taro' });
+      .send({ name: 'Taro', auth0UserId: "usertaro" });
     const createdPlayerId = responsePostTaro.body.id;
 
     const response = await request(app)
@@ -199,6 +218,7 @@ describe('【正常系】プレイヤーの取得(ID指定)', () => {
     expect(response.body.losses).toBe(0);
     expect(response.body.goals).toBe(0);
     expect(response.body.concede).toBe(0);
+    expect(response.body[0].auth0UserId).toBe("usertaro");
   });
 
 });

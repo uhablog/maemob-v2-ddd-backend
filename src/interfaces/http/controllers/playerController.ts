@@ -91,16 +91,26 @@ export class PlayerController {
     }
 
     // nameのバリデーション
-    const { name } = req.body;
+    const { name, auth0UserId } = req.body;
     if (name === undefined) {
       res.status(400).json({message: "nameは必須です"});
+      return;
+    }
+    if (auth0UserId === undefined) {
+      res.status(400).json({message: "auth0UserIdは必須です"});
       return;
     }
 
     console.log(`resister player ${name}`);
 
     try {
-      const player = await this.registerPlayerUseCase.execute({name, conventionId});
+      const player = await this.registerPlayerUseCase.execute(
+        {
+          name,
+          conventionId,
+          auth0UserId
+        }
+      );
       res.status(201).json(player);
     } catch (error) {
       if (error instanceof NotFoundError) {

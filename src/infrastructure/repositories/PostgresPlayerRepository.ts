@@ -10,6 +10,7 @@ import { Losses } from "../../domain/value-objects/losses";
 import { Goals } from "../../domain/value-objects/goals";
 import { Concede } from "../../domain/value-objects/concede";
 import { PlayerId } from "../../domain/value-objects/playerId";
+import { Auth0UserId } from "../../domain/value-objects/auth0UserId";
 
 export class PostgresPlayerRepository implements IPlayerRepository {
   constructor(){}
@@ -34,6 +35,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
         playerStats.losses,
         playerStats.goals,
         playerStats.concede,
+        playerStats.auth0UserId,
       ];
 
       // idが存在しているかチェックして存在していればUpdate、存在していなければInsertを行う
@@ -52,7 +54,8 @@ export class PostgresPlayerRepository implements IPlayerRepository {
             draws,
             losses,
             goals,
-            concede
+            concede,
+            auth0_user_id
           ) VALUES (
             $1,
             $2,
@@ -62,7 +65,8 @@ export class PostgresPlayerRepository implements IPlayerRepository {
             $6,
             $7,
             $8,
-            $9
+            $9,
+            $10
           )
           RETURNING id
         `, inputValues);
@@ -81,7 +85,8 @@ export class PostgresPlayerRepository implements IPlayerRepository {
             draws = $6,
             losses = $7,
             goals = $8,
-            concede = $9
+            concede = $9,
+            auth0_user_id = $10
           WHERE
             id = $1
         `, inputValues);
@@ -135,6 +140,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
         ,losses
         ,goals
         ,concede
+        ,auth0_user_id
       FROM
         players
       WHERE
@@ -153,7 +159,8 @@ export class PostgresPlayerRepository implements IPlayerRepository {
       new Draws(row.draws),
       new Losses(row.losses),
       new Goals(row.goals),
-      new Concede(row.concede))
+      new Concede(row.concede),
+      new Auth0UserId(row.auth0_user_id))
     );
   }
 
@@ -175,6 +182,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
           ,losses
           ,goals
           ,concede
+          ,auth0_user_id
         FROM
           players
         WHERE
@@ -196,6 +204,7 @@ export class PostgresPlayerRepository implements IPlayerRepository {
         new Losses(result.rows[0].losses),
         new Goals(result.rows[0].goals),
         new Concede(result.rows[0].concede),
+        new Auth0UserId(result.rows[0].auth0_user_id)
       );
     } catch (error) {
       console.log(error);

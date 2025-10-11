@@ -131,3 +131,5 @@ dist
 .pnp.*
 
 /db/postgre-variables.env
+
+AGENTS.md

@@ -179,7 +179,7 @@
             }
           },
           "400": {
-            "description": "Invalid input"
+            "description": "リクエストパラメータの誤り"
           },
           "404": {
             "description": "指定された大会は存在しません"
@@ -875,13 +875,15 @@
           "draws": { "type": "integer", "example": 1},
           "losses": { "type": "integer", "example": 1},
           "goals": { "type": "integer", "example": 1},
-          "concede": {"type": "integer", "example": 1}
+          "concede": {"type": "integer", "example": 1},
+          "auth0UserId": { "type": "string", "format": "uuid"}
         }
       },
       "NewPlayer": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "example": "Taro" }
+          "name": { "type": "string", "example": "Taro" },
+          "auth0UserId": { "type": "string", "format": "uuid"}
         },
         "required": [
           "name"

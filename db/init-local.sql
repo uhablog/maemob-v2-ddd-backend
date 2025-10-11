@@ -96,6 +96,7 @@ CREATE TABLE players (
   losses INT DEFAULT 0,
   goals INT DEFAULT 0,
   concede INT DEFAULT 0,
+  auth0_user_id VARCHAR(100) NOT NULL,
   CONSTRAINT fk_player_conventions FOREIGN KEY (convention_id)
     REFERENCES conventions(id)
 );

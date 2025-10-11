@@ -13,11 +13,13 @@ import { Wins } from "../../../domain/value-objects/wins";
 import { NotFoundError } from "../../../shared/errors/NotFoundError";
 import { PlayerDTO } from "../../dto/playerDto";
 import { PlayerId } from "../../../domain/value-objects/playerId";
+import { Auth0UserId } from "../../../domain/value-objects/auth0UserId";
 
 
 interface ResisterPlayerDTO {
   name: string
   conventionId: string
+  auth0UserId: string
 }
 
 export class ResisterPlayerUseCase {
@@ -50,7 +52,8 @@ export class ResisterPlayerUseCase {
         new Draws(0),
         new Losses(0),
         new Goals(0),
-        new Concede(0)
+        new Concede(0),
+        new Auth0UserId(data.auth0UserId)
       );
 
       await this.playerRepository.save(client, player);

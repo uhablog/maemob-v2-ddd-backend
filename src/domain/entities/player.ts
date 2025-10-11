@@ -1,3 +1,4 @@
+import { Auth0UserId } from "../value-objects/auth0UserId";
 import { Concede } from "../value-objects/concede";
 import { ConventionID } from "../value-objects/conventionId";
 import { Draws } from "../value-objects/draws";
@@ -20,6 +21,7 @@ export class Player {
     private _losses: Losses = new Losses(0),
     private _goals: Goals = new Goals(0),
     private _concede: Concede = new Concede(0),
+    private _auth0UserId: Auth0UserId,
   ) {}
 
   get id(): PlayerId {
@@ -63,6 +65,7 @@ export class Player {
       losses: this._losses.value,
       goals: this._goals.value,
       concede: this._concede.value,
+      auth0UserId: this._auth0UserId.auth0UserId,
     }
   }
 }

@@ -88,7 +88,7 @@ describe('【異常系】POST /players - プレイヤーの作成', () => {
     const testUUID = uuidv4();
     const response = await request(app)
       .post(`/api/conventions/${testUUID}/players`)
-      .send({name: "Taro"});
+      .send({name: "Taro", auth0UserId: "usertaro"});
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe(`convention id: ${testUUID} not found`);
@@ -176,7 +176,7 @@ describe('【正常系】プレイヤーの取得', () => {
     expect(response.body[1].losses).toBe(1);
     expect(response.body[1].goals).toBe(5);
     expect(response.body[1].concede).toBe(4);
-    expect(response.body[0].auth0UserId).toBe("userhanako");
+    expect(response.body[1].auth0UserId).toBe("userhanako");
 
     expect(response.body[2].name).toBe('Saburo');
     expect(response.body[2].points).toBe(0);
@@ -185,7 +185,7 @@ describe('【正常系】プレイヤーの取得', () => {
     expect(response.body[2].losses).toBe(2);
     expect(response.body[2].goals).toBe(2);
     expect(response.body[2].concede).toBe(5);
-    expect(response.body[0].auth0UserId).toBe("usersaburo");
+    expect(response.body[2].auth0UserId).toBe("usersaburo");
   });
 
 });
@@ -218,7 +218,7 @@ describe('【正常系】プレイヤーの取得(ID指定)', () => {
     expect(response.body.losses).toBe(0);
     expect(response.body.goals).toBe(0);
     expect(response.body.concede).toBe(0);
-    expect(response.body[0].auth0UserId).toBe("usertaro");
+    expect(response.body.auth0UserId).toBe("usertaro");
   });
 
 });
